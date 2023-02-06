@@ -6,7 +6,7 @@
 <div class="d-flex bg-200 mb-3 flex-row-reverse">
     <a href="{{ route('articulos.nuevo') }}" class="btn btn-primary btn-sm" title="Añadir Articulos"><i class="text-100 fas fa-plus-circle"></i></a>
 </div>
-<div id="tableExample2" data-list='{"valueNames":["numero", "articulo","descripcion","marca","modelo","comentario","ns","categoria","estatus", "precio_actual", "precio_incial"],"page":10,"pagination":true}'>
+<div id="tableExample2" data-list='{"valueNames":["numero", "articulo","descripcion","marca","modelo","comentario","ns","categoria","estatus", "precio_actual", "precio_incial"],"page":25,"pagination":true}'>
     <div class="table-responsive scrollbar">
       <table class="table table-bordered table-striped fs--2 mb-0">
         <thead class="bg-500 text-900">

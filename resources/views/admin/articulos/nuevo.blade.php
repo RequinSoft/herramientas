@@ -35,6 +35,14 @@
                             </button>
                         </div>
                     @enderror
+                    @error('created_at')
+                        <div class="form-group">
+                            <button type="text" disabled class="btn btn-danger btn-block"
+                                id="error" name="error">
+                                {{$message}}
+                            </button>
+                        </div>
+                    @enderror
                 </div>          
                 <div class="col-sm-6 mb-3">
                     <input type="text" class="form-control" id="action_by" name="action_by"value="{{auth()->user()->id}}" hidden>
@@ -70,13 +78,17 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-sm-6 mb-3">
+                <div class="col-sm-4 mb-3">
                     <label class="form-label" for="event-venue">Descripción</label>
                     <input class="form-control" id="description" name="description" type="text" value="{{ old('description') }}" />
                 </div>
-                <div class="col-sm-6 mb-3">
+                <div class="col-sm-4 mb-3">
                     <label class="form-label" for="event-venue">Comentario</label>
                     <input class="form-control" id="comentario1" name="comentario1" type="text" value="{{ old('comentario1') }}" />
+                </div>
+                <div class="col-sm-4 mb-3">
+                    <label class="form-label" for="datepicker">Fecha de Ingreso</label>
+                    <input class="form-control datetimepicker" name="created_at" type="text" placeholder="d/m/y H:i" data-options='{"enableTime":true,"dateFormat":"Y-m-d H:i:S","disableMobile":true}' />
                 </div>
 
             

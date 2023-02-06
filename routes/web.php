@@ -219,9 +219,9 @@ Route::controller(AdministradorController::class)->group(function(){
         ->middleware('auth.admin')
         ->name('resguardo.nuevo');
         
-    Route::get('/resguardo_buscar', 'resguardo_buscar')
+    Route::get('/resguardo_buscar_persona', 'resguardo_buscar_persona')
         ->middleware('auth.admin')
-        ->name('resguardo.buscar');
+        ->name('resguardo.buscar_persona');
         
     Route::post('/resguardo_resumen', 'resguardo_resumen')
         ->middleware('auth.admin')
@@ -239,10 +239,28 @@ Route::controller(AdministradorController::class)->group(function(){
         ->middleware('auth.admin')
         ->name('resguardo.editarlinea'); 
         
-        Route::post('/resguardo_actualizar_linea', 'resguardo_actualizar_linea')
+    Route::post('/resguardo_actualizar_linea', 'resguardo_actualizar_linea')
+        ->middleware('auth.admin')
+        ->name('resguardo.actualizarLinea'); 
+        
+        Route::get('/resguardo_buscar_articulo', 'resguardo_buscar_articulo')
             ->middleware('auth.admin')
-            ->name('resguardo.actualizarLinea');   
+            ->name('resguardo.buscar_articulo');
+        
+        Route::post('/asignado_articulo', 'asignado_articulo')
+            ->middleware('auth.admin')
+            ->name('resguardo.asignado_articulo');
 
+    /****************************/
+    /****************************/
+    /******** Historial *********/  
+    Route::get('/buscar_historial_articulo', 'buscar_historial_articulo')
+        ->middleware('auth.admin')
+        ->name('resguardo.buscar_historial_articulo');
+        
+    Route::post('/historial_articulo', 'historial_articulo')
+        ->middleware('auth.admin')
+        ->name('resguardo.historial_articulo');
 });
 
 

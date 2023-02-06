@@ -490,18 +490,36 @@ class AdministradorController extends Controller
                 'modelo' => 'required',
                 'precio_inicial' => 'required',
                 'ns' => 'required|unique:articles',
+                'created_at' => 'required',
             ],
             [
                 'article.required' => 'El Artículo es Obligatorio',
                 'modelo.required' => 'El Modelo es Obligatorio',
                 'ns.required' => 'El Número de Serie es Obligatorio',
                 'ns.unique' => 'El Número de Serie ya existe',
+                'created_at.required' => 'La Fecha es obligatoria',
             ]
         );
-        
+
+        //return request();
         $datos = Article::create(request(['article', 'precio_inicial', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1']));
         $last = Article::all()->last()->id;
-        $update = Article::query()->where(['id' => $last])->update(['precio_actual' => request()->precio_inicial]);
+        $hoy = Carbon::now();
+        $update = Article::query()->where(['id' => $last])->update(['created_at' => request()->created_at]);
+        $articulo = Article::find($last);
+
+        $categoria = Category::find(request()->category_id);
+        $depreciacion = $categoria->depreciacion;
+        $dias_restar = ($articulo->created_at)->diffInDays($hoy);
+
+        $dias_precio = $depreciacion - $dias_restar;
+
+        $precio_actual = ((request()->precio_inicial)/$depreciacion) * $dias_precio;
+        $precio_actual = (int)$precio_actual;
+        if($precio_actual <= 0){
+            $precio_actual = 0;
+        }
+        $update2 = Article::query()->where(['id' => $last])->update(['precio_actual' => $precio_actual]);
 
         return  redirect()->to('/admin_articulos')->with('articulo_add', $datos->article);
     }
@@ -618,18 +636,18 @@ class AdministradorController extends Controller
         return  redirect()->to('/admin_index');
     }
 
-    public function resguardo_buscar(){
+    public function resguardo_buscar_persona(){
         
         $n=0;
         $ruta = '';
+        $personal=[];
 
         $resguardos = Line::query()->where('status', 'Activo')->distinct()->get('personal_id');
         
         foreach($resguardos as $resguardo){
             $personal[] = Personal::query()->where('id', $resguardo->personal_id)->get();             
         }
-        
-        return view('admin.registers.buscar', compact('ruta', 'personal'));
+        return view('admin.registers.buscar_persona', compact('ruta', 'personal'));
     }
 
     public function resguardo_editar($id){
@@ -689,5 +707,44 @@ class AdministradorController extends Controller
         }else{
             return  redirect()->to('/resguardo_buscar');
         }
+    }    
+
+    public function resguardo_buscar_articulo(){
+        
+        $ruta = '';
+        $date = Carbon::now();
+
+        $articulos = Article::all();
+        return view('admin.registers.buscar_articulo', compact('ruta', 'articulos', 'date'));
+    }
+
+    public function asignado_articulo(){
+        
+        $articulo = Article::find(request()->articulos);
+        $asignado = Line::with('usuario', 'personal')->where(['article_id'=>$articulo[0]->id, 'status'=> 'Activo'])->get();
+        return $asignado;
+    }
+
+    
+    /****************************************/
+    /*************** Historial **************/
+    /****************************************/
+    
+    public function buscar_historial_articulo(){
+        $ruta = '';
+        $date = Carbon::now();
+
+        $articulos = Article::all();
+        //return $articulos;
+
+        return view('admin.registers.buscar_historial_articulo', compact('articulos', 'ruta', 'date'));
+    }
+
+    public function historial_articulo(){
+        $ruta = '';
+        $articulo = Article::find(request()->articulos);
+        $historial = Line::with('usuario', 'articulos', 'personal')->where(['article_id' => request()->articulos])->get();
+        //return $articulo;
+        return view('admin.registers.historial_articulo', compact('historial', 'ruta', 'articulo'));
     }
 }

@@ -34,5 +34,11 @@ class Line extends Model
         return $this->belongsTo(User::class, 'users_id');
     }
 
+    public function personal(){
+
+        //return $this->belongsTo(Register::class, 'id');
+        return $this->belongsTo(Personal::class, 'personal_id');
+    }
+
 
 }
