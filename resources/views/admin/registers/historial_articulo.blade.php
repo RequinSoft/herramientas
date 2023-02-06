@@ -43,22 +43,32 @@
             <th class="sort" data-sort="personal">Personal</th>
             <th class="sort" data-sort="fecha_asignacion">Fecha de Asignación</th>
             <th class="sort" data-sort="fecha_entrega">Fecha de Entrega</th>
+            <th class="sort" data-sort="fecha_entrega">Reporte</th>
             <th class="sort" data-sort="movimiento">Movimiento x</th>
           </tr>
         </thead>
         <tbody class="list">
             @foreach ($historial as $historial)
             <tr>
-                
                 <td>{{ $n }}</td>
                 <td class="personal">{{ $historial->personal->nombre }}</td>
                 <td class="text-end fecha_asignacion">{{ $historial->created_at }}</td>
+
                 @if ($historial->status == 'Activo')
                     <td class="text-end fecha_entrega">N/A</td>
                 @else
                     <td class="text-end fecha_entrega">{{ $historial->updated_at }}</td>                    
                 @endif
-                <td class="text-end movimiento">{{ $historial->usuario->name }}</td>
+
+                @if (file_exists("../storage/app/reports/".$historial->article_id."-".$fecha[$n-1].".pdf"))
+                    <td class="text-center">
+                        <a href="../storage/app/reports/{{$historial->article_id."-".$fecha[$n-1]}}.pdf" class="btn btn-secondary btn-sm" title="Ver" target="_blank"><i class="far fa-file-pdf"></i></a>                   
+                    </td>
+                @else
+                    <td class="text-center">Sin Reporte</td>
+                @endif
+
+                <td class="text-end movimiento">{{$historial->usuario->name}}</td>
             </tr>
             @php
                 $n++;

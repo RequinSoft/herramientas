@@ -103,6 +103,7 @@
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Custom 1</label>
                     <input class="form-control" id="comment1" name="comment1" type="text" value="{{ old('comment1') }}" />
+                    <input class="form-control" id="status" name="status" type="text" value="activo" hidden/>
                 </div>
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Custom 2</label>
@@ -120,7 +121,7 @@
 
 @section('script')
     @error ('user')
-        @if ($message == 'duplicado')
+        @if ($message == 'inactivo')
             <script>
                 Swal.fire({
                     title: 'El usuario ya existe, ¿Desea activarlo?',

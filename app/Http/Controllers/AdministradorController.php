@@ -101,7 +101,7 @@ class AdministradorController extends Controller
             ],
             [
                 'user.required' => 'El usuario es obligatorio',
-                'user.unique' => 'duplicado',
+                'user.unique' => 'Usuario Duplicado',
                 'name.required' => 'El nombre es obligatorio',
                 'email.required' => 'El email es obligatorio',
                 'email.unique' => 'El email ya está en uso',
@@ -124,6 +124,7 @@ class AdministradorController extends Controller
 
 
         $usuario = User::create(request(['user', 'name', 'email', 'password', 'comment1', 'comment2', 'role_id', 'group_id', 'action_by']));
+        
         return  redirect()->to('/admin_usuarios')->with('user_add', $usuario->user);
     }
 
@@ -690,12 +691,14 @@ class AdministradorController extends Controller
         $linea = Line::find(request()->id_linea);
         $articulo = Article::query()->where(['id' => $linea->article_id])->update(['status' => request()->status, 'comentario1' => request()->comentario1]);
         
+        $fecha = Carbon::parse($linea->updated_at)->format('d-m-Y');
+
         $ruta = '../storage/app/reports/';
         if(request()->hasFile('image')){
 
             //return 'Sí hay imagen';
             $imagen = request()->file('image');
-            $nombre_imagen = Str::slug($linea->article_id).".".$imagen->guessExtension();
+            $nombre_imagen = Str::slug($linea->article_id." - ".$fecha).".".$imagen->guessExtension();
             //return $nombre_imagen;
 
             copy($imagen->getRealPath(), $ruta.$nombre_imagen);
@@ -705,7 +708,7 @@ class AdministradorController extends Controller
         if($existencia != 0){
             return  redirect()->to('/resguardo_editar/'.$linea->personal_id);
         }else{
-            return  redirect()->to('/resguardo_buscar');
+            return  redirect()->to('/resguardo_buscar_persona');
         }
     }    
 
@@ -714,15 +717,46 @@ class AdministradorController extends Controller
         $ruta = '';
         $date = Carbon::now();
 
-        $articulos = Article::all();
+        $articulos = Article::where(['status' => 'Asignado'])->get();
         return view('admin.registers.buscar_articulo', compact('ruta', 'articulos', 'date'));
     }
 
     public function asignado_articulo(){
         
+        $ruta = '';
+        $asignado = [];
+        
+        $articulos = Article::all();
         $articulo = Article::find(request()->articulos);
         $asignado = Line::with('usuario', 'personal')->where(['article_id'=>$articulo[0]->id, 'status'=> 'Activo'])->get();
-        return $asignado;
+        //return $asignado;
+        return view('admin.registers.asignado_articulo', compact('asignado', 'ruta', 'articulo'));       
+    }
+
+    public function actualizar_asignado_articulo(){
+        //return request();
+        if(request()->status == 'Asignado'){
+            return  redirect()->to('/resguardo_buscar_articulo');
+        }else{
+            Line::query()->where(['id' => request()->id])->update(['status' => 'Inactivo']);        
+            $linea = Line::find(request()->id);
+            $articulo = Article::query()->where(['id' => request()->article_id])->update(['status' => request()->status, 'comentario1' => request()->comentario1]);
+            $fecha = Carbon::parse($linea->updated_at)->format('d-m-Y');
+    
+            //return $fecha;
+            $ruta = '../storage/app/reports/';
+            if(request()->hasFile('image')){
+    
+                //return 'Sí hay imagen';
+                $imagen = request()->file('image');
+                $nombre_imagen = Str::slug($linea->article_id." - ".$fecha).".".$imagen->guessExtension();
+                //return $nombre_imagen;
+    
+                copy($imagen->getRealPath(), $ruta.$nombre_imagen);
+            }
+
+            return  redirect()->to('/resguardo_buscar_persona');
+        }
     }
 
     
@@ -742,9 +776,15 @@ class AdministradorController extends Controller
 
     public function historial_articulo(){
         $ruta = '';
+        $fecha = [];
+
         $articulo = Article::find(request()->articulos);
         $historial = Line::with('usuario', 'articulos', 'personal')->where(['article_id' => request()->articulos])->get();
-        //return $articulo;
-        return view('admin.registers.historial_articulo', compact('historial', 'ruta', 'articulo'));
+
+        foreach($historial as $hist){            
+            $fecha[] = Carbon::parse($hist->updated_at)->format('d-m-Y');
+        }
+        //return $historial;
+        return view('admin.registers.historial_articulo', compact('historial', 'ruta', 'articulo', 'fecha'));
     }
 }

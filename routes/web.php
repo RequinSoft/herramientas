@@ -243,13 +243,17 @@ Route::controller(AdministradorController::class)->group(function(){
         ->middleware('auth.admin')
         ->name('resguardo.actualizarLinea'); 
         
-        Route::get('/resguardo_buscar_articulo', 'resguardo_buscar_articulo')
-            ->middleware('auth.admin')
-            ->name('resguardo.buscar_articulo');
+    Route::get('/resguardo_buscar_articulo', 'resguardo_buscar_articulo')
+        ->middleware('auth.admin')
+        ->name('resguardo.buscar_articulo');
+    
+    Route::post('/asignado_articulo', 'asignado_articulo')
+        ->middleware('auth.admin')
+        ->name('resguardo.asignado_articulo');
         
-        Route::post('/asignado_articulo', 'asignado_articulo')
-            ->middleware('auth.admin')
-            ->name('resguardo.asignado_articulo');
+    Route::post('/actualizar_asignado_articulo', 'actualizar_asignado_articulo')
+        ->middleware('auth.admin')
+        ->name('resguardo.actualizar_asignado_articulo');
 
     /****************************/
     /****************************/

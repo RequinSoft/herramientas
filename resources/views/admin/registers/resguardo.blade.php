@@ -76,7 +76,7 @@
       <br>
       <div class="col-sm-12 mb-3">
         <center>
-        <a href="{{route('resguardo.buscar')}}" class="btn btn-primary btn-user btn-block">
+        <a href="{{route('resguardo.buscar_persona')}}" class="btn btn-primary btn-user btn-block">
             Regresar
         </a> 
         </center>                 
