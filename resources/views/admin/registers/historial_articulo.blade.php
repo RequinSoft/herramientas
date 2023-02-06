@@ -26,6 +26,17 @@
                         <h4 class="mb-0">{{ number_format($articulo[0]->precio_actual, 0, ".", ",") }}</h4>
                     </div>
                 </a>
+                @php
+                    $textColor='';
+                    if($articulo[0]->status == 'Disponible'){
+                        $textColor = 'text-success';
+                    }else if($articulo[0]->status == 'Robado'){
+                        $textColor = 'text-danger';
+                    }else if($articulo[0]->status == 'Extraviado'){
+                        $textColor = 'text-warning';
+                    }
+                @endphp
+                <span class="{{$textColor}} fs-1 me-1 " data-fa-transform="grow-2">{{$articulo[0]->status}}</span>
             </div>
         </div>
     </div>
