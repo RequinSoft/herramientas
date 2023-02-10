@@ -13,9 +13,11 @@ use App\Models\Group;
 use App\Models\User;
 use App\Models\Personal;
 use App\Models\Line;
+use LaravelDaily\LaravelCharts\Classes\LaravelChart;
 use App\Mail\SalidasMailable;
 use Faker\Provider\ar_EG\Person;
 use Illuminate\Support\Facades\Mail;
+
 
 use Illuminate\Http\Request;
 
@@ -31,9 +33,11 @@ class AdministradorController extends Controller
 
         $ruta = '';
         $n=0;
+        $articulosRobadosxMes = [];
 
         $fecha = Carbon::now();
         $esteMes = $fecha->format('m');
+        $esteAno = $fecha->format('Y');
 
         // Valor Inventario
         $valorInventario = Article::query()->whereIn('status',['Disponible', 'Asignado', 'En Reparacion'])->get()->sum('precio_actual');
@@ -53,15 +57,18 @@ class AdministradorController extends Controller
             }
             $n++;
         }
+
+        //Artículos robados por mes en el año
+        for($i=1; $i<=12; $i++){
+            
+            $articulosRobadosxMes [] = [Article::query()->whereIn('status',['Robado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->count()];
+            $articulosExtraviadosxMes [] = [Article::query()->whereIn('status',['Extraviado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->count()];
+            $articulosDisponiblesxMes [] = [Article::query()->whereIn('status',['Disponible'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->count()];
+            $articulosAsignadosxMes [] = [Article::query()->whereIn('status',['Asignado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->count()];
+        }
         
-
-
-
-
-
-
-        //return $valorInventario;
-        return view('admin.index', compact('ruta', 'valorInventario', 'articuloRobado', 'esteMes', 'categorias', 'articulosDisponible', 'promedio'));
+        //return $articulosRobadosxMes;
+        return view('admin.index', compact('ruta', 'valorInventario', 'articuloRobado', 'esteMes', 'categorias', 'articulosDisponible', 'promedio', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes'));
     }
 
     public function password($id){
@@ -787,4 +794,6 @@ class AdministradorController extends Controller
         //return $historial;
         return view('admin.registers.historial_articulo', compact('historial', 'ruta', 'articulo', 'fecha'));
     }
+
+    
 }

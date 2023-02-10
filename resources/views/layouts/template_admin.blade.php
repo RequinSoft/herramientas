@@ -25,6 +25,7 @@
     <link href="{{ $ruta }}../resources/vendors/choices/choices.min.css" rel="stylesheet">
     <link href="{{ $ruta }}../resources/vendors/prism/prism-okaidia.css" rel="stylesheet">
     <link href="{{ $ruta }}../resources/vendors/flatpickr/flatpickr.min.css" rel="stylesheet" />
+    @yield('css')
     <meta name="theme-color" content="#ffffff">
     <script src="{{ $ruta }}../resources/assets/js/config.js"></script>
     <script src="{{ $ruta }}../resources/vendors/overlayscrollbars/OverlayScrollbars.min.js"></script>
@@ -464,10 +465,10 @@
     <script src="{{ $ruta }}../resources/assets/js/theme.js"></script>
     <script src="{{ $ruta }}../resources/vendors/dropzone/dropzone.min.js"></script>
     <script src="{{ $ruta }}../resources/assets/js/flatpickr.js"></script>
-    
+    <script src="{{ $ruta }}../resources/assets/charts/highcharts.js"></script>
+    @yield('script')
     
 
-    @yield('script')
   </body>
 
 </html>

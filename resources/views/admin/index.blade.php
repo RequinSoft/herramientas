@@ -45,7 +45,97 @@
     <!-- Pérdidas este Mes -->
   </div>
 
+  <!-- Gráficos Artículos -->
+  <div class="row g-3 mb-3">
+
+    <!-- Artículos Disponibles y Asignados en Cantidad -->
+    <div class="col-md-12 col-xxl-12">
+      <div id="containerArticulos" class="card-body">
+      </div>
+    </div>
+    <!-- Artículos Disponibles y Asignados en Cantidad -->
+
+  </div>
+  <!-- Gráficos Artículos -->
+  
+
   
 
   <!-- Contenido -->
+@endsection
+@section('script')
+<!-- Artículos Disponibles y Asignados en Dinero -->
+<script>
+  var dataDisponibles = @json($articulosDisponiblesxMes);
+  var dataAsignados = @json($articulosAsignadosxMes);
+  var dataRobados = @json($articulosRobadosxMes);
+  var dataExtraviados = @json($articulosExtraviadosxMes);
+  console.log(dataDisponibles);
+  Highcharts.chart('containerArticulos', {
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: 'Artículos'
+      },
+      xAxis: {
+          categories: [
+              'Ene',
+              'Feb',
+              'Mar',
+              'Abr',
+              'May',
+              'Jun',
+              'Jul',
+              'Ago',
+              'Sep',
+              'Oct',
+              'Nov',
+              'Dic'
+          ],
+          crosshair: true
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: 'Cantidad'
+          }
+      },
+      tooltip: {
+          headerFormat: '<span style="font-size:5px">{point.key}</span><table>',
+          pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+              '<td style="padding:0"><b>{point.y:.1f} piezas</b></td></tr>',
+          footerFormat: '</table>',
+          shared: true,
+          useHTML: true
+      },
+      plotOptions: {
+          column: {
+              pointPadding: 0.2,
+              borderWidth: 1
+          }
+      },
+      series: [{
+          name: 'Disponibles',
+          data: dataDisponibles
+
+      }, {
+          name: 'Asignados',
+          data: dataAsignados
+
+      },{
+          name: 'Robados',
+          data: dataRobados
+
+      }, {
+          name: 'Extraviados',
+          data: dataExtraviados
+
+      }]
+  });
+</script>
+<!-- Artículos Disponibles y Asignados en Dinero -->
+@endsection
+
+@section('css')
 @endsection
