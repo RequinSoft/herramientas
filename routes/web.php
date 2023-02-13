@@ -265,6 +265,21 @@ Route::controller(AdministradorController::class)->group(function(){
     Route::post('/historial_articulo', 'historial_articulo')
         ->middleware('auth.admin')
         ->name('resguardo.historial_articulo');
+
+        /****************************/
+        /****************************/
+        /*********** LDAP ***********/  
+    Route::get('/server_ldap', 'server_ldap')
+        ->middleware('auth.admin')
+        ->name('admin.server_ldap');
+        
+    Route::post('/editar_ldap', 'editar_ldap')
+        ->middleware('auth.admin')
+        ->name('admin.editar_ldap');
+
+    Route::get('/probar_ldap', 'probar_ldap')
+        ->middleware('auth.admin')
+        ->name('admin.probar_ldap');
 });
 
 

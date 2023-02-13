@@ -25,7 +25,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -38,7 +38,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -51,7 +51,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -64,7 +64,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -77,7 +77,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -90,7 +90,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -103,7 +103,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -116,7 +116,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -129,7 +129,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -142,7 +142,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -155,7 +155,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -168,7 +168,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -181,7 +181,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -194,7 +194,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -207,7 +207,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -220,7 +220,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -233,7 +233,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -246,7 +246,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -259,7 +259,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         
@@ -272,7 +272,7 @@ class ArticleSeeder extends Seeder
         $articulo1->precio_inicial = "20000";
         $articulo1->precio_actual = "0";
         $articulo1->comentario1 = "";
-        $articulo1->category_id = "1";
+        $articulo1->category_id = "2";
         $articulo1->status = "Disponible";
         $articulo1->save();
         

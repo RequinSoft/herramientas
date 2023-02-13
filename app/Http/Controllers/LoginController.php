@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\Ldap;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -73,12 +74,14 @@ class LoginController extends Controller
             $updatedatos = Article::query()->where(['id' => $row->id])->update(['precio_actual' => $precio_actual]);
         }
 
-        $ldap_server = '10.74.16.53';
-        $ldap_dominio = 'ad.fresnilloplc.mx';
-        $ldap_port = 389;
-        $ldap_user = request()->user.'@'.$ldap_dominio;
-        $ldap_pass =  request()->password;
-        $ldap_version = 3;
+        $ldap = Ldap::all();
+
+        $ldap_server = $ldap[0]->ldap_server;
+        $ldap_dominio = $ldap[0]->ldap_domain;
+        $ldap_port = $ldap[0]->ldap_port;
+        $ldap_user = $ldap[0]->ldap_user.'@'.$ldap_dominio;
+        $ldap_pass =  $ldap[0]->ldap_password;
+        $ldap_version = $ldap[0]->ldap_version;
 
         $ldap_conn = ldap_connect($ldap_server, $ldap_port);
         ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, $ldap_version);

@@ -16,12 +16,13 @@ return new class extends Migration
         //
         Schema::create('ldap', function (Blueprint $table) {
             $table->id();
-            $table->string('ldap_server');
-            $table->string('ldap_port');
-            $table->integer('ldap_version');
-            $table->string('ldap_domain');
-            $table->string('ldap_user');
-            $table->string('ldap_password');
+            $table->string('ldap_server')->nullable();
+            $table->integer('ldap_port')->nullable();
+            $table->integer('ldap_version')->nullable();
+            $table->string('ldap_domain')->nullable();
+            $table->string('ldap_user')->nullable();
+            $table->string('ldap_password')->nullable();
+            $table->boolean('ldap_status')->default(0);
             $table->string('action_by')->nullable();
             $table->timestamps();
         });

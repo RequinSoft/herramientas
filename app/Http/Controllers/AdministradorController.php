@@ -13,6 +13,7 @@ use App\Models\Group;
 use App\Models\User;
 use App\Models\Personal;
 use App\Models\Line;
+use App\Models\Ldap;
 use LaravelDaily\LaravelCharts\Classes\LaravelChart;
 use App\Mail\SalidasMailable;
 use Faker\Provider\ar_EG\Person;
@@ -32,8 +33,14 @@ class AdministradorController extends Controller
     public function index_admin(){
 
         $ruta = '';
-        $n=0;
         $articulosRobadosxMes = [];
+        $articulosExtraviadosxMes = [];
+        $articulosDisponiblesxMes = [];
+        $articulosAsignadosxMes = [];
+        $articulosRobadosxMes_Moneda = [];
+        $articulosExtraviadosxMes_Moneda = [];
+        $articulosDisponiblexCategoria = [];
+        $categorias = [];
 
         $fecha = Carbon::now();
         $esteMes = $fecha->format('m');
@@ -42,33 +49,27 @@ class AdministradorController extends Controller
         // Valor Inventario
         $valorInventario = Article::query()->whereIn('status',['Disponible', 'Asignado', 'En Reparacion'])->get()->sum('precio_actual');
         // Artículos Robados
-        $articuloRobado = Article::query()->whereIn('status',['Robado'])->whereMonth('updated_at', $esteMes)->get()->sum('precio_actual');
+        $articuloRobado = Article::query()->whereIn('status',['Robado', 'Extraviado'])->whereMonth('updated_at', $esteMes)->whereYear('updated_at', $esteAno)->get()->sum('precio_actual');
         // Procentaje de artículos
-        $categorias = Category::where('status', 'activo')->whereNot('category', 'Default')->get();
-        foreach($categorias as $categoria){
-            $articulosTotal[] = Article::whereNotIn('status', ['Robado', 'Extraviado', 'Baja'])->where('category_id', $categoria->id)->count();
-            $articulosDisponible[] = Article::where('status', 'Disponible')->where('category_id', $categoria->id)->count();
-            
-            if($articulosTotal[$n] == 0){
-                $promedio[] = 0;
-            }
-            else{
-                $promedio[] = ($articulosDisponible[$n] * 100) / $articulosTotal[$n];
-            }
-            $n++;
+        $cat = Category::where('status', 'activo')->whereNot('category', 'Default')->get();
+        foreach($cat as $categoria){
+            $articulosDisponiblexCategoria[] = [Article::where('status', 'Disponible')->where('category_id', $categoria->id)->count()];
+            $categorias[] = $categoria->category;
         }
 
-        //Artículos robados por mes en el año
+        //Artículos por Status por mes en el año
         for($i=1; $i<=12; $i++){
             
             $articulosRobadosxMes [] = [Article::query()->whereIn('status',['Robado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->count()];
             $articulosExtraviadosxMes [] = [Article::query()->whereIn('status',['Extraviado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->count()];
             $articulosDisponiblesxMes [] = [Article::query()->whereIn('status',['Disponible'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->count()];
             $articulosAsignadosxMes [] = [Article::query()->whereIn('status',['Asignado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->count()];
+            
+            $articulosRobadosxMes_Moneda [] = [Article::query()->whereIn('status',['Robado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->sum('precio_actual')];
+            $articulosExtraviadosxMes_Moneda [] = [Article::query()->whereIn('status',['Extraviado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->sum('precio_actual')];
         }
-        
-        //return $articulosRobadosxMes;
-        return view('admin.index', compact('ruta', 'valorInventario', 'articuloRobado', 'esteMes', 'categorias', 'articulosDisponible', 'promedio', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes'));
+                
+        return view('admin.index', compact('ruta', 'valorInventario', 'articuloRobado', 'esteMes', 'categorias', 'articulosDisponiblexCategoria', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes', 'articulosRobadosxMes_Moneda', 'articulosExtraviadosxMes_Moneda'));
     }
 
     public function password($id){
@@ -769,8 +770,7 @@ class AdministradorController extends Controller
     
     /****************************************/
     /*************** Historial **************/
-    /****************************************/
-    
+    /****************************************/    
     public function buscar_historial_articulo(){
         $ruta = '';
         $date = Carbon::now();
@@ -795,5 +795,52 @@ class AdministradorController extends Controller
         return view('admin.registers.historial_articulo', compact('historial', 'ruta', 'articulo', 'fecha'));
     }
 
+    
+    /****************************************/
+    /***************** LDAP *****************/
+    /****************************************/ 
+    public function server_ldap(){
+        $ruta = '';
+
+        $ldap = Ldap::all();
+
+        //return $ldap->count();
+        return view('admin.ldap.editar', compact('ldap', 'ruta'));
+    }
+
+    public function editar_ldap(){
+        //return request();
+
+        if(request()->ldap_status == 'on'){
+            $ldap_status = Ldap::query()->where(['id' => 1])->update(['ldap_status' => 1]);
+        }else{
+            $ldap_status = Ldap::query()->where(['id' => 1])->update(['ldap_status' => 0]);
+        }
+        $ldap = Ldap::query()->where(['id' => 1])->update(['ldap_server' => request()->ldap_server, 'ldap_port' => request()->ldap_port, 'ldap_domain' => request()->ldap_domain, 'ldap_version' => request()->ldap_version, 'ldap_user' => request()->ldap_user, 'ldap_password' => request()->ldap_password]);
+        
+        return  redirect()->to('/server_ldap')->with('ldap_msg', "Actualización Exitosa");
+    }
+
+    public function probar_ldap(){
+        $ldap = Ldap::all();
+        //return $ldap;
+
+        $ldap_server = $ldap[0]->ldap_server;
+        $ldap_dominio = $ldap[0]->ldap_domain;
+        $ldap_port = $ldap[0]->ldap_port;
+        $ldap_user = $ldap[0]->ldap_user.'@'.$ldap_dominio;
+        $ldap_pass =  $ldap[0]->ldap_password;
+        $ldap_version = $ldap[0]->ldap_version;
+
+        $ldap_conn = ldap_connect($ldap_server, $ldap_port);
+        ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, $ldap_version);
+        ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
+
+        if(@ldap_bind($ldap_conn, $ldap_user, $ldap_pass)){
+            return  redirect()->to('/server_ldap')->with('ldap_msg', "Conexión Exitosa");
+        }else{
+            return  redirect()->to('/server_ldap')->with('ldap_msg', "Conexión Fallida");
+        }
+    }
     
 }

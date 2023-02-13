@@ -9,6 +9,8 @@ class Ldap extends Model
 {
     use HasFactory;
 
+    protected $table = 'ldap';
+
     protected $fillable = [
         'ldap_server',
         'ldap_port',
@@ -16,6 +18,7 @@ class Ldap extends Model
         'ldap_domain',
         'ldap_user',
         'ldap_password',
+        'ldap_status',
         'action_by',
     ];
 }

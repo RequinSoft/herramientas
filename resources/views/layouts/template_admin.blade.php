@@ -191,6 +191,12 @@
                       <!-- more inner pages-->
                     </li>
                   </ul>
+                  
+                  <!-- parent pages-->
+                  <a class="nav-link" href="{{ route('admin.server_ldap') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="far fa-address-book"></span></span><span class="nav-link-text ps-1">LDAP</span>
+                    </div>
+                  </a>
                 </li>
 
                 <li class="nav-item">
