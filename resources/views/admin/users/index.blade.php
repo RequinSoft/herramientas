@@ -45,7 +45,7 @@
                         <a href="{{ route('usuarios.editar', $row->id) }}" class="btn btn-sm" title="Editar"><i class="text-500 fas fa-edit"></i></a>
                     @else
                         @if ($row->auten == 1)
-                            <a href="{{ route('usuarios.pass', $row->id) }}" class="btn  btn-sm" title="Contraseña"><i class="text-500 fas fa-key"></i></a>
+                            <a href="{{ route('admin.pass', $row->id) }}" class="btn  btn-sm" title="Contraseña"><i class="text-500 fas fa-key"></i></a>
                             &nbsp; 
                         @else
                             <a href="#" class="btn btn-secondary btn-sm" title="Se debe cambiar en el Servidor LDAP"><i class="text-500 fas fa-key"></i></a>

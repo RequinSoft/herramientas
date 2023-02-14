@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\Personal;
 use App\Models\Line;
 use App\Models\Ldap;
+use App\Mail\ResetPass;
 use LaravelDaily\LaravelCharts\Classes\LaravelChart;
 use App\Mail\SalidasMailable;
 use Faker\Provider\ar_EG\Person;
@@ -80,6 +81,39 @@ class AdministradorController extends Controller
 
         return view('admin.users.pass', compact('usuarios', 'ruta'));
     }
+    
+    public function actualizar_password(Request $request){
+        
+        $this->validate(request(), [
+            'password' => 'required|min:8',
+            'password1' => 'required|min:8',
+            'password1' => 'same:password',
+        ],
+        [
+            'password.required' => 'La contraseña es obligatoria',
+            'password.min' => 'La contraseña debe ser de 8 caracteres mínimo',
+            'password.same' => 'Las contraseñas no coinciden',
+            'password1.same' => 'Las contraseñas no coinciden',
+        ]
+        );
+
+        $id = request (['id']);
+        $datos = User::with('group', 'role')->where(['id' => $id])->get();
+        
+        foreach($datos as $user){
+
+        }
+        $usuario = User::query()->where(['id' => $id])->update(['password' => bcrypt($request->password)]);
+
+        
+        $email[] = $user->email;
+            
+        $correo = new ResetPass($user->name, request('password'));
+        
+        Mail::to($user->email)->send($correo);
+
+        return  redirect()->to('/admin_usuarios')->with('pass', $user->name);
+    }
 
     public function users_admin(){
 
@@ -95,7 +129,9 @@ class AdministradorController extends Controller
         $ruta = '';
         $roles = Role::all();
         $grupos = Group::all();
-        return view('admin.users.nuevo', compact('roles', 'grupos', 'ruta'));
+        $ldap = Ldap::all();
+
+        return view('admin.users.nuevo', compact('roles', 'grupos', 'ruta', 'ldap'));
     }
 
     public function crear(){
@@ -143,8 +179,9 @@ class AdministradorController extends Controller
         $usuarios = User::find($id);
         $grupos = Group::all()->where('status', 'activo');
         $roles = Role::all();
+        $ldap = Ldap::all();
 
-        return view('admin.users.editar', compact('usuarios', 'grupos', 'roles', 'ruta'));
+        return view('admin.users.editar', compact('usuarios', 'grupos', 'roles', 'ruta', 'ldap'));
     }
 
     public function actualizar(){

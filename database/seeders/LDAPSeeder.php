@@ -24,7 +24,7 @@ class LDAPSeeder extends Seeder
         $ldap->ldap_user = "user";
         $ldap->ldap_password = "pass";
         $ldap->action_by = "admin";
-        $ldap->ldap_status = 1;
+        $ldap->ldap_status = 0;
         $ldap->save();
     }
 }

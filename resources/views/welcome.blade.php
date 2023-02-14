@@ -65,3 +65,16 @@
     <!-- ===============================================-->
 
 @endsection
+
+@section('script')
+  @if (session('info'))
+      <script>
+        colsole.log('Hola');
+          Swal.fire({
+              title: "Articulo Dado de Baja",
+              text: "{{ session('info') }}",
+              confirmButtonText: "Aceptar",
+          });
+      </script>
+  @endif
+@endsection

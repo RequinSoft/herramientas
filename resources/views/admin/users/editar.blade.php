@@ -10,10 +10,15 @@
     <div class="card-body bg-light">
         <form  action="{{ route('usuarios.actualizar') }}" method="POST" enctype="multipart/form-data">
         @csrf
+        @php
+            $hidden = "";
+            if($usuarios->user == 'admin'){
+                $hidden = 'hidden';
+            }
+        @endphp
             <div class="row gx-2">             
                 <div class="col-sm-6 mb-3">
-                    <input type="text" class="form-control" id="id" name="id"
-                    value="{{ $usuarios->id }}" hidden>
+                    <input type="text" class="form-control" id="id" name="id" value="{{ $usuarios->id }}" hidden>
                 </div> 
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Foto de Perfil</label>
@@ -21,12 +26,8 @@
                 </div> 
 
                 <div class="col-sm-6 mb-3">
-                    <label class="form-label" for="event-venue">Usuario</label>
-                    <input class="form-control" id="user" name="user" type="text" value="{{ $usuarios->user }}"
-                    @if($usuarios->user == 'admin')
-                        hidden
-                    @endif
-                    />
+                    <label class="form-label" for="event-venue" {{$hidden}}>Usuario</label>
+                    <input class="form-control" id="user" name="user" type="text" value="{{ $usuarios->user }}" {{$hidden}} />
                 </div>
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Nombre Completo</label>
@@ -36,19 +37,31 @@
                     <label class="form-label" for="event-venue">E-mail</label>
                     <input class="form-control" id="email" name="email" type="email" value="{{ $usuarios->email }}" />
                 </div>
-                <div class="col-sm-6">
-                    <label class="form-label" for="time-zone">Tipo de Autenticación</label>
-                    <select class="form-select" id="auten" name="auten">
-                        @if (($usuarios->auten == 1))
-                            <option value="1" selected>Local</option>
-                            <option value="2">LDAP</option>                                             
-                        @else
-                            <option value="1">Local</option>
-                            <option value="2" selected>LDAP</option>   
-                            
-                        @endif   
-                    </select>
-                </div>
+
+
+                @if ($ldap[0]->ldap_status == 0 || $usuarios->user == 'admin')
+                    <div class="col-sm-6 mb-1">
+                        <label class="form-label" for="time-zone">Tipo de Autenticación</label>
+                        <input class="form-control" id="auten_label" name="auten_label"  value="Local" disabled />
+                        <input class="form-control" id="auten" name="auten"  value="1" hidden/>
+                    </div>
+                @else
+                    <div class="col-sm-6">
+                        <label class="form-label" for="time-zone">Tipo de Autenticación</label>
+                        <select class="form-select" id="auten" name="auten">
+                            @if (($usuarios->auten == 1))
+                                <option value="1" selected>Local</option>
+                                <option value="2">LDAP</option>                                             
+                            @else
+                                <option value="1">Local</option>
+                                <option value="2" selected>LDAP</option>   
+                                
+                            @endif   
+                        </select>
+                    </div>                    
+                @endif
+
+
                 @if ($usuarios->user != 'admin')
                 <div class="col-sm-6">
                     <label class="form-label" for="time-zone">Rol</label>

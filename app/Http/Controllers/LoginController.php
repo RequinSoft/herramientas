@@ -38,6 +38,7 @@ class LoginController extends Controller
     public function index(){
 
         $ruta = '';
+
         return view('welcome', compact('ruta'));
     }
 
@@ -55,6 +56,12 @@ class LoginController extends Controller
         );
 
         $hoy = Carbon::now();
+
+        $userdb = User::query()->where(['user' => request()->user])->get();
+
+        if($userdb->count() == 0){
+            return redirect()->to('/')->with('empty', "Actualización Exitosa");
+        }
 
         $articulo = Article::with('category')->whereIn('status', ['Disponible', 'Asignado', 'En Reparacion'])->get();
         
@@ -87,7 +94,6 @@ class LoginController extends Controller
         ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, $ldap_version);
         ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
 
-        $userdb = User::query()->where(['user' => request()->user])->get();
 
         if($userdb[0]->auten == 2){
             //Conexión con el servidor LDAP
@@ -107,13 +113,9 @@ class LoginController extends Controller
                     if(auth()->user()->role_id == 1){
                         return redirect()->route('admin.index');
                     }else if (auth()->user()->role_id == 2){
-                        return redirect()->route('auth.index');
+                        return redirect()->route('coadmin.index');
                     }else if (auth()->user()->role_id == 3){
-                        return redirect()->route('user.index');
-                    }else if (auth()->user()->role_id == 4){
-                        return redirect()->route('validator.index');
-                    }else if (auth()->user()->role_id == 5){
-                        return redirect()->route('revisor.index');
+                        return redirect()->route('receptor.index');
                     }
                 }
             }
@@ -128,13 +130,9 @@ class LoginController extends Controller
                 if(auth()->user()->role_id == 1){
                     return redirect()->route('admin.index');
                 }else if (auth()->user()->role_id == 2){
-                    return redirect()->route('auth.index');
+                    return redirect()->route('coadmin.index');
                 }else if (auth()->user()->role_id == 3){
-                    return redirect()->route('user.index');
-                }else if (auth()->user()->role_id == 4){
-                    return redirect()->route('validator.index');
-                }else if (auth()->user()->role_id == 5){
-                    return redirect()->route('revisor.index');
+                    return redirect()->route('receptor.index');
                 }
             }
         }

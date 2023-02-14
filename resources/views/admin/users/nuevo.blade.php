@@ -69,13 +69,21 @@
                     <label class="form-label" for="event-venue">E-mail</label>
                     <input class="form-control" id="email" name="email" type="email" value="{{ old('email') }}" />
                 </div>
-                <div class="col-sm-6">
-                    <label class="form-label" for="time-zone">Tipo de Autenticación</label>
-                    <select class="form-select" id="auten" name="auten">
-                        <option value="1" selected> Local</option>
-                        <option value="2"> LDAP</option>     
-                    </select>
-                </div>
+                @if ($ldap[0]->ldap_status == 0)
+                    <div class="col-sm-6 mb-1">
+                        <label class="form-label" for="time-zone">Tipo de Autenticación</label>
+                        <input class="form-control" id="auten_label" name="auten_label"  value="Local" disabled />
+                        <input class="form-control" id="auten" name="auten"  value="1" hidden/>
+                    </div>
+                @else
+                    <div class="col-sm-6">
+                        <label class="form-label" for="time-zone">Tipo de Autenticación</label>
+                        <select class="form-select" id="auten" name="auten">
+                            <option value="1" selected> Local</option>
+                            <option value="2"> LDAP</option>     
+                        </select>
+                    </div>                    
+                @endif
                 <div class="col-sm-6">
                     <label class="form-label" for="time-zone">Rol</label>
                     <select class="form-select" id="role_id" name="role_id">

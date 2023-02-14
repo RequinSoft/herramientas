@@ -11,6 +11,7 @@ use App\Http\Controllers\PlacesController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CoadminController;
 use App\Http\Controllers\GraficasController;
 use App\Http\Controllers\ProveedorController;
 
@@ -55,7 +56,11 @@ Route::controller(AdministradorController::class)->group(function(){
 
     Route::get('/resetear_pass/{id}', 'password')
         ->middleware('auth.admin')
-        ->name('usuarios.pass');
+        ->name('admin.pass');
+
+    Route::post('/resetear_pass', 'actualizar_password')
+        ->middleware('auth.admin')
+        ->name('admin.actualizar_pass');
 
     /**********************/
     /**********************/
@@ -282,6 +287,80 @@ Route::controller(AdministradorController::class)->group(function(){
         ->name('admin.probar_ldap');
 });
 
+
+/************************************ */
+/************************************ */
+//*********** Ruta Coadmin ***********//
+/************************************ */
+/************************************ */
+Route::controller(CoadminController::class)->group(function(){
+
+    Route::get('/coadmin_index','index_admin')
+        ->middleware('auth.coadmin')
+        ->name('coadmin.index');
+
+    /**********************/
+    /**********************/
+    /***** Resguardos *****/
+    Route::get('/resguardo_coadmin_nuevo', 'resguardo_nuevo')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_nuevo');
+        
+    Route::get('/resguardo_coadmin_buscar_persona', 'resguardo_buscar_persona')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_buscar_persona');
+            
+    Route::post('/resguardo_coadmin_resumen', 'resguardo_resumen')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_resumen');
+
+    Route::post('/resguardo_coadmin_crear', 'resguardo_crear')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_crear');
+
+
+
+
+
+            
+        
+        
+        Route::get('/resguardo_coadmin_editar/{id}', 'resguardo_editar')
+            ->middleware('auth.coadmin')
+            ->name('resguardo.coadmin_editar');            
+        
+        Route::get('/resguardo_coadmin_editar_linea/{linea}', 'resguardo_editar_linea')
+            ->middleware('auth.coadmin')
+            ->name('resguardo.coadmin_editarlinea'); 
+            
+        Route::post('/resguardo_coadmin_actualizar_linea', 'resguardo_actualizar_linea')
+            ->middleware('auth.coadmin')
+            ->name('resguardo.coadmin_actualizarLinea'); 
+            
+        Route::get('/resguardo_coadmin_buscar_articulo', 'resguardo_buscar_articulo')
+            ->middleware('auth.coadmin')
+            ->name('resguardo.coadmin_buscar_articulo');
+        
+        Route::post('/asignado_coadmin_articulo', 'asignado_articulo')
+            ->middleware('auth.coadmin')
+            ->name('resguardo.asignado_coadmin_articulo');
+            
+        Route::post('/actualizar_coadmin_asignado_articulo', 'actualizar_asignado_articulo')
+            ->middleware('auth.coadmin')
+            ->name('resguardo.actualizar_coadmin_asignado_articulo');
+
+            /****************************/
+            /****************************/
+            /******** Historial *********/  
+            Route::get('/coadmin_buscar_historial_articulo', 'buscar_historial_articulo')
+                ->middleware('auth.coadmin')
+                ->name('resguardo.coadmin_buscar_historial_articulo');
+                
+            Route::post('/coadmin_historial_articulo', 'historial_articulo')
+                ->middleware('auth.coadmin')
+                ->name('resguardo.coadmin_historial_articulo');
+        
+});
 
 
 //Ruta Autorizador

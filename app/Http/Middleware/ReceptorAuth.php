@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class ValidatorAuth
+class ReceptorAuth
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class ValidatorAuth
     public function handle(Request $request, Closure $next)
     {
         if(auth()->check()){
-            if(auth()->user()->role_id == 4 && auth()->user()->status == 'activo'){
+            if(auth()->user()->role_id == 3 && auth()->user()->status == 'activo'){
                 return $next($request);
             }
         }
