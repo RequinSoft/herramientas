@@ -96,10 +96,10 @@ class CoadminController extends Controller
         $id = auth()->user()->id;
 
         //Obtener el grupo del Usuario
-        $grupo = Group::query()->where('id', $id)->get();
+        $grupo = auth()->user()->group_id;
         
         //Categorías del Grupo al que pertence el usuario
-        $cat_grupo = Category::query()->where('group_id', $grupo[0]->id)->get('id');
+        $cat_grupo = Category::query()->where('group_id', $grupo)->get('id');
         //Artículos x Grupo al que pertenece el Usuario
         $articulos = Article::with('category')->where('status', 'Disponible')->whereIn('category_id', $cat_grupo)->get();
 
@@ -165,24 +165,25 @@ class CoadminController extends Controller
         return  redirect()->to('/coadmin_index');
     }
 
-
-
-
-
-
-
     public function resguardo_buscar_persona(){
         
         $n=0;
         $ruta = '';
         $personal=[];
 
-        $resguardos = Line::query()->where('status', 'Activo')->distinct()->get('personal_id');
+        $id_grupo = auth()->user()->group_id;
         
+        $cat_grupo = Category::query()->where('group_id', $id_grupo)->get('id');
+
+        $articulos_grupo = Article::query()->whereIn('category_id', $cat_grupo)->where('status', 'Asignado')->get('id');
+        $resguardos = Line::query()->where('status', 'Activo')->whereIn('article_id', $articulos_grupo)->distinct()->get('personal_id');
+
+        //return $resguardos;
+
         foreach($resguardos as $resguardo){
             $personal[] = Personal::query()->where('id', $resguardo->personal_id)->get();             
         }
-        return view('admin.registers.buscar_persona', compact('ruta', 'personal'));
+        return view('coadmin.registers.buscar_persona', compact('ruta', 'personal'));
     }
 
     public function resguardo_editar($id){
@@ -190,9 +191,13 @@ class CoadminController extends Controller
         $ruta = '../';
         $logged_user = auth()->user()->id;
         $group_user = auth()->user()->group_id;
-        
+                
+        $cat_grupo = Category::query()->where('group_id', $group_user)->get('id');
+        $articulos_grupo = Article::query()->whereIn('category_id', $cat_grupo)->where('status', 'Asignado')->get('id');
+
         $person = Personal::find($id);
-        $articulos = Line::with('articulos', 'usuario')->where('personal_id', $id)->where('status', 'Activo')->get();
+
+        $articulos = Line::with('articulos', 'usuario')->where('personal_id', $id)->whereIn('article_id', $articulos_grupo)->where('status', 'Activo')->get();
 
         //Foreach para obtener los articulos en un arreglo y después obtener la suma
         foreach($articulos as $art){
@@ -201,7 +206,7 @@ class CoadminController extends Controller
         $suma = Article::query()->whereIn('id', $articulo)->get()->sum('precio_actual');
         
         //return $articulos;
-        return view('admin.registers.resguardo', compact('logged_user', 'group_user', 'articulos', 'ruta', 'person', 'suma'));
+        return view('coadmin.registers.resguardo', compact('logged_user', 'group_user', 'articulos', 'ruta', 'person', 'suma'));
     }
 
     public function resguardo_editar_linea($linea){
@@ -215,12 +220,18 @@ class CoadminController extends Controller
 
         //return $line;
         //return $person;
-        return view('admin.registers.editarlinea', compact('line', 'person', 'ruta', 'articulo')); 
+        return view('coadmin.registers.editarlinea', compact('line', 'person', 'ruta', 'articulo')); 
     }
 
     public function resguardo_actualizar_linea(){
         //return request();
         
+        $id_grupo = auth()->user()->group_id;
+        $cat_grupo = Category::query()->where('group_id', $id_grupo)->get('id');
+        $articulos_grupo = Article::query()->whereIn('category_id', $cat_grupo)->where('status', 'Asignado')->get('id');
+
+        //return $articulos_grupo;
+
         Line::query()->where(['id' => request()->id_linea])->update(['status' => 'Inactivo']);
         $linea = Line::find(request()->id_linea);
         $articulo = Article::query()->where(['id' => $linea->article_id])->update(['status' => request()->status, 'comentario1' => request()->comentario1]);
@@ -237,22 +248,26 @@ class CoadminController extends Controller
 
             copy($imagen->getRealPath(), $ruta.$nombre_imagen);
         }
-        $existencia = Line::query()->where('personal_id', $linea->personal_id)->where('status', 'Activo')->get()->count();
+        $existencia = Line::query()->where('personal_id', $linea->personal_id)->whereIn('article_id', $articulos_grupo)->where('status', 'Activo')->get()->count();
 
         if($existencia != 0){
-            return  redirect()->to('/resguardo_editar/'.$linea->personal_id);
+            return  redirect()->to('/resguardo_coadmin_editar/'.$linea->personal_id);
         }else{
-            return  redirect()->to('/resguardo_buscar_persona');
+            return  redirect()->to('/resguardo_coadmin_buscar_persona');
         }
-    }    
+    }
 
     public function resguardo_buscar_articulo(){
         
         $ruta = '';
         $date = Carbon::now();
+        $group_user = auth()->user()->group_id;
+                
+        $cat_grupo = Category::query()->where('group_id', $group_user)->get('id');
 
-        $articulos = Article::where(['status' => 'Asignado'])->get();
-        return view('admin.registers.buscar_articulo', compact('ruta', 'articulos', 'date'));
+        $articulos = Article::where(['status' => 'Asignado'])->whereIn('category_id', $cat_grupo)->get();
+
+        return view('coadmin.registers.buscar_articulo', compact('ruta', 'articulos', 'date'));
     }
 
     public function asignado_articulo(){
@@ -264,13 +279,14 @@ class CoadminController extends Controller
         $articulo = Article::find(request()->articulos);
         $asignado = Line::with('usuario', 'personal')->where(['article_id'=>$articulo[0]->id, 'status'=> 'Activo'])->get();
         //return $asignado;
-        return view('admin.registers.asignado_articulo', compact('asignado', 'ruta', 'articulo'));       
+
+        return view('coadmin.registers.asignado_articulo', compact('asignado', 'ruta', 'articulo'));       
     }
 
     public function actualizar_asignado_articulo(){
         //return request();
         if(request()->status == 'Asignado'){
-            return  redirect()->to('/resguardo_buscar_articulo');
+            return  redirect()->to('/resguardo_coadmin_buscar_articulo');
         }else{
             Line::query()->where(['id' => request()->id])->update(['status' => 'Inactivo']);        
             $linea = Line::find(request()->id);
@@ -289,14 +305,46 @@ class CoadminController extends Controller
                 copy($imagen->getRealPath(), $ruta.$nombre_imagen);
             }
 
-            return  redirect()->to('/resguardo_buscar_persona');
+            return  redirect()->to('/resguardo_coadmin_buscar_persona');
         }
     }
 
     
     /****************************************/
     /*************** Historial **************/
-    /****************************************/    
+    /****************************************/ 
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+
+    
+
+        
+
+    
+
+    
+
+       
     public function buscar_historial_articulo(){
         $ruta = '';
         $date = Carbon::now();

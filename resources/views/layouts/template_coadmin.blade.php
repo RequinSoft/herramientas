@@ -238,8 +238,8 @@
 
               <li class="nav-item dropdown"><a class="nav-link pe-0 ps-2" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <div class="avatar avatar-xl">
-                    @if (file_exists("../storage/app/avatars/".auth()->user()->name.".jpg"))
-                      <img class="rounded-circle" src="{{$ruta}}../storage/app/avatars/{{auth()->user()->name}}.jpg" alt="" />
+                    @if (file_exists("../storage/app/avatars/".auth()->user()->user.".".auth()->user()->ext))
+                      <img class="rounded-circle" src="{{$ruta}}../storage/app/avatars/{{auth()->user()->user}}.{{auth()->user()->ext}}" alt="" />
                     @else
                       <img class="rounded-circle" src="{{$ruta}}../storage/app/avatars/avatar.png" alt="" /> 
                     @endif

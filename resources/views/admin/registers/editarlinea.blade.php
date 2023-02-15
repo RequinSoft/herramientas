@@ -14,7 +14,12 @@
       </div>
       <!--/.bg-holder-->
 
-      <div class="avatar avatar-5xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src="{{ $ruta }}../resources/assets/img/team/2.jpg" width="200" alt="" />
+      <div class="avatar avatar-5xl avatar-profile">
+        @if (file_exists("../storage/app/avatars/personal-".$person->id.".".$person->ext))
+            <img class="rounded-circle img-thumbnail shadow-sm" src="{{ $ruta }}../storage/app/avatars/personal-{{$person->id}}.{{$person->ext}}" width="200" alt="" />
+        @else
+            <img class="rounded-circle img-thumbnail shadow-sm" src="{{ $ruta }}../storage/app/avatars/avatar.png" width="200" alt="" />
+        @endif
       </div>
     </div>
     <div class="card-body">

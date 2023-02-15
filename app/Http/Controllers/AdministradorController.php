@@ -168,6 +168,8 @@ class AdministradorController extends Controller
 
 
         $usuario = User::create(request(['user', 'name', 'email', 'password', 'comment1', 'comment2', 'role_id', 'group_id', 'action_by']));
+        $last = User::all()->last()->id;
+        $update = User::query()->where(['id' => $last])->update(['ext'=>$imagen->guessExtension()]);
         
         return  redirect()->to('/admin_usuarios')->with('user_add', $usuario->user);
     }
@@ -204,6 +206,7 @@ class AdministradorController extends Controller
             copy($imagen->getRealPath(), $ruta.$nombre_imagen);
         }
 
+        $updateext = User::query()->where(['id' => $id])->update(['ext' => $imagen->guessExtension()]);
         //return $user;
         $mensaje = "".$user[0]->user;
 
@@ -263,19 +266,23 @@ class AdministradorController extends Controller
             ]
         );
 
+        $personal = Personal::create(request(['nombre', 'puesto', 'group_id']));
+        $last = Personal::all()->last()->id;
+        
+        $nombre = "personal_".$last;
         $ruta = '../storage/app/avatars/';
         if(request()->hasFile('image')){
 
             //return 'Sí hay imagen';
             $imagen = request()->file('image');
-            $nombre_imagen = Str::slug(request()->nombre).".".$imagen->guessExtension();
+            $nombre_imagen = Str::slug($nombre).".".$imagen->guessExtension();
             //return $nombre_imagen;
 
             copy($imagen->getRealPath(), $ruta.$nombre_imagen);
         }
 
+        $update = Personal::query()->where(['id' => $last])->update(['ext'=>$imagen->guessExtension()]);
 
-        $personal = Personal::create(request(['nombre', 'puesto', 'group_id']));
         return  redirect()->to('/admin_personal')->with('user_add', $personal->nombre);
     }
 
@@ -292,6 +299,7 @@ class AdministradorController extends Controller
     public function personal_actualizar(){
 
         $id = request (['id']);
+        $nombre = "personal_".request()->id;
         $logged_user = auth()->user()->id;
 
         $updateuser = Personal::query()->where(['id' => $id])->update(request(['nombre', 'puesto', 'group_id']));
@@ -302,11 +310,12 @@ class AdministradorController extends Controller
 
             //return 'Sí hay imagen';
             $imagen = request()->file('image');
-            $nombre_imagen = Str::slug(request()->user).".".$imagen->guessExtension();
+            $nombre_imagen = Str::slug($nombre).".".$imagen->guessExtension();
             //return $nombre_imagen;
 
             copy($imagen->getRealPath(), $ruta.$nombre_imagen);
         }
+        $updateext = Personal::query()->where(['id' => $id])->update(['ext' => $imagen->guessExtension()]);
 
         //return $user;
         $mensaje = "".$user[0]->nombre;

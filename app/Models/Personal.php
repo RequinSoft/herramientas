@@ -16,6 +16,7 @@ class Personal extends Model
         'nombre',
         'puesto',
         'group_id',
+        'ext',
         'status',
     ];
     

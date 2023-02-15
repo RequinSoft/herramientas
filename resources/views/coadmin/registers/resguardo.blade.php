@@ -1,4 +1,4 @@
-@extends('layouts.template_admin')
+@extends('layouts.template_coadmin')
 
 @section('title', 'TG - Resumen Resguardo Nuevo')
 
@@ -70,7 +70,7 @@
                 <td class="text-end precio_actual">$ {{ number_format($articulo->articulos->precio_actual, 0, ".", ",") }}</td>
                 <td class="text-end asignatario">{{ $articulo->usuario->name }}</td>
                 <td class="text-end">{{ $articulo->created_at }}</td>
-                <td class="text-center"><a href="{{ route('resguardo.editarlinea', $articulo->id) }}" class="btn  btn-sm" title="Reporte"><i class="text-500 fas fa-edit"></i></a></td>
+                <td class="text-center"><a href="{{ route('resguardo.coadmin_editarlinea', $articulo->id) }}" class="btn  btn-sm" title="Reporte"><i class="text-500 fas fa-edit"></i></a></td>
             </tr>
             @php
                 $n++;
@@ -81,7 +81,7 @@
       <br>
       <div class="col-sm-12 mb-3">
         <center>
-        <a href="{{route('resguardo.buscar_persona')}}" class="btn btn-primary btn-user btn-block">
+        <a href="{{route('resguardo.coadmin_buscar_persona')}}" class="btn btn-primary btn-user btn-block">
             Regresar
         </a> 
         </center>                 

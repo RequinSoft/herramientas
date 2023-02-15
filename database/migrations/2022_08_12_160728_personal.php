@@ -18,6 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('puesto')->nullable();
+            $table->string('ext')->nullable();
             $table->unsignedBigInteger('group_id');
             $table->foreign('group_id')->references('id')->on('groups');
 

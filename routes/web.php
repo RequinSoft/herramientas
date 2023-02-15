@@ -318,36 +318,46 @@ Route::controller(CoadminController::class)->group(function(){
         ->middleware('auth.coadmin')
         ->name('resguardo.coadmin_crear');
 
+    Route::get('/resguardo_coadmin_editar/{id}', 'resguardo_editar')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_editar');
 
+    Route::get('/resguardo_coadmin_editar_linea/{linea}', 'resguardo_editar_linea')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_editarlinea'); 
+
+    Route::post('/resguardo_coadmin_actualizar_linea', 'resguardo_actualizar_linea')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_actualizarLinea');
+
+    Route::get('/resguardo_coadmin_buscar_articulo', 'resguardo_buscar_articulo')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_buscar_articulo');
+
+    Route::post('/asignado_coadmin_articulo', 'asignado_articulo')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.asignado_coadmin_articulo');
+
+    Route::post('/actualizar_coadmin_asignado_articulo', 'actualizar_asignado_articulo')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.actualizar_coadmin_asignado_articulo');
 
 
 
             
         
         
-        Route::get('/resguardo_coadmin_editar/{id}', 'resguardo_editar')
-            ->middleware('auth.coadmin')
-            ->name('resguardo.coadmin_editar');            
+                    
         
-        Route::get('/resguardo_coadmin_editar_linea/{linea}', 'resguardo_editar_linea')
-            ->middleware('auth.coadmin')
-            ->name('resguardo.coadmin_editarlinea'); 
-            
-        Route::post('/resguardo_coadmin_actualizar_linea', 'resguardo_actualizar_linea')
-            ->middleware('auth.coadmin')
-            ->name('resguardo.coadmin_actualizarLinea'); 
-            
-        Route::get('/resguardo_coadmin_buscar_articulo', 'resguardo_buscar_articulo')
-            ->middleware('auth.coadmin')
-            ->name('resguardo.coadmin_buscar_articulo');
         
-        Route::post('/asignado_coadmin_articulo', 'asignado_articulo')
-            ->middleware('auth.coadmin')
-            ->name('resguardo.asignado_coadmin_articulo');
             
-        Route::post('/actualizar_coadmin_asignado_articulo', 'actualizar_asignado_articulo')
-            ->middleware('auth.coadmin')
-            ->name('resguardo.actualizar_coadmin_asignado_articulo');
+         
+            
+        
+        
+        
+            
+        
 
             /****************************/
             /****************************/
