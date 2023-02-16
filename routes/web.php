@@ -301,6 +301,33 @@ Route::controller(CoadminController::class)->group(function(){
 
     /**********************/
     /**********************/
+    /****** Artículos *****/
+    Route::get('/coadmin_articulos', 'articulo_index')
+        ->middleware('auth.coadmin')
+        ->name('articulos.coadmin_index');
+
+    Route::get('/coadmin_articulo_nuevo', 'articulo_nuevo')
+        ->middleware('auth.coadmin')
+        ->name('articulos.coadmin_nuevo');
+
+    Route::post('/coadmin_articulo_crear', 'articulo_crear')
+        ->middleware('auth.coadmin')
+        ->name('articulos.coadmin_crear');
+
+    Route::get('/coadmin_editar_articulos/{id}','articulos_editar')
+        ->middleware('auth.coadmin')
+        ->name('articulos.coadmin_editar');
+
+    Route::post('/coadmin_actualizar_articulos', 'articulos_actualizar')
+        ->middleware('auth.coadmin')
+        ->name('articulos.coadmin_actualizar');
+
+    Route::get('/coadmin_inactivar_articulos/{id}', 'articulo_inactivar')
+        ->middleware('auth.coadmin')
+        ->name('articulos.coadmin_inactivar');
+
+    /**********************/
+    /**********************/
     /***** Resguardos *****/
     Route::get('/resguardo_coadmin_nuevo', 'resguardo_nuevo')
         ->middleware('auth.coadmin')
@@ -342,6 +369,17 @@ Route::controller(CoadminController::class)->group(function(){
         ->middleware('auth.coadmin')
         ->name('resguardo.actualizar_coadmin_asignado_articulo');
 
+    /****************************/
+    /****************************/
+    /******** Historial *********/  
+    Route::get('/coadmin_buscar_historial_articulo', 'buscar_historial_articulo')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_buscar_historial_articulo');
+        
+    Route::post('/coadmin_historial_articulo', 'historial_articulo')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_historial_articulo');
+
 
 
             
@@ -359,16 +397,7 @@ Route::controller(CoadminController::class)->group(function(){
             
         
 
-            /****************************/
-            /****************************/
-            /******** Historial *********/  
-            Route::get('/coadmin_buscar_historial_articulo', 'buscar_historial_articulo')
-                ->middleware('auth.coadmin')
-                ->name('resguardo.coadmin_buscar_historial_articulo');
-                
-            Route::post('/coadmin_historial_articulo', 'historial_articulo')
-                ->middleware('auth.coadmin')
-                ->name('resguardo.coadmin_historial_articulo');
+            
         
 });
 

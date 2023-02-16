@@ -76,6 +76,105 @@ class CoadminController extends Controller
 
     
     /****************************************/
+    /************** Artículos ***************/
+    /****************************************/
+        
+    public function articulo_index(){
+
+        $ruta = '';
+        $date = Carbon::now();
+        $group_user = auth()->user()->group_id;
+                
+        $cat_grupo = Category::query()->where('group_id', $group_user)->get('id');
+
+        $datos = Article::with('category')->whereNotIn('status', ['Danado', 'Baja'])->whereIn('category_id', $cat_grupo)->get();
+        
+        return view('coadmin.articulos.index', compact('datos', 'ruta', 'date'));                
+    }
+
+    public function articulo_nuevo(){
+
+        $ruta = '';
+        $group_user = auth()->user()->group_id;
+
+        $categorias = Category::query()->where('group_id', $group_user)->get();
+
+        return view('coadmin.articulos.nuevo', compact('categorias', 'ruta'));
+    }
+
+    public function articulo_crear(){
+        
+        $this->validate(request(), [
+                'article' => 'required',
+                'modelo' => 'required',
+                'precio_inicial' => 'required',
+                'ns' => 'required|unique:articles',
+                'created_at' => 'required',
+            ],
+            [
+                'article.required' => 'El Artículo es Obligatorio',
+                'modelo.required' => 'El Modelo es Obligatorio',
+                'ns.required' => 'El Número de Serie es Obligatorio',
+                'ns.unique' => 'El Número de Serie ya existe',
+                'created_at.required' => 'La Fecha es obligatoria',
+            ]
+        );
+
+        //return request();
+        $datos = Article::create(request(['article', 'precio_inicial', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1']));
+        $last = Article::all()->last()->id;
+        $hoy = Carbon::now();
+        $update = Article::query()->where(['id' => $last])->update(['created_at' => request()->created_at]);
+        $articulo = Article::find($last);
+
+        $categoria = Category::find(request()->category_id);
+        $depreciacion = $categoria->depreciacion;
+        $dias_restar = ($articulo->created_at)->diffInDays($hoy);
+
+        $dias_precio = $depreciacion - $dias_restar;
+
+        $precio_actual = ((request()->precio_inicial)/$depreciacion) * $dias_precio;
+        $precio_actual = (int)$precio_actual;
+        if($precio_actual <= 0){
+            $precio_actual = 0;
+        }
+        $update2 = Article::query()->where(['id' => $last])->update(['precio_actual' => $precio_actual]);
+
+        return  redirect()->to('/coadmin_articulos')->with('articulo_add', $datos->article);
+    }
+
+    public function articulos_editar($id){
+
+        $ruta = '../';
+        $group_user = auth()->user()->group_id;
+        $datos = Article::find($id);
+
+        $categorias = Category::query()->where('group_id', $group_user)->get();
+
+        return view('coadmin.articulos.editar', compact('datos', 'categorias', 'ruta'));
+    }
+
+    public function articulos_actualizar(){
+
+        $id = request (['id']);
+        $ns = "Artículo ".request()->article." -- N/S ".request()->ns;
+        
+        $updatedatos = Article::query()->where(['id' => $id])->update(request(['article', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1', 'precio_inicial']));
+        
+        return  redirect()->to('/coadmin_articulos')->with('articulo_update', $ns);
+    }
+
+    public function articulo_inactivar($id){
+
+        $datos = Article::query()->where(['id' => $id])->update(['status' => 'baja']);
+        $articulo = Article::find($id);
+        $info = $articulo->article." con N/S ".$articulo->ns;
+
+        return  redirect()->to('/coadmin_articulos')->with('info', $info);
+    }
+
+    
+    /****************************************/
     /************** Resguardos **************/
     /****************************************/
     
@@ -313,7 +412,32 @@ class CoadminController extends Controller
     /****************************************/
     /*************** Historial **************/
     /****************************************/ 
+    public function buscar_historial_articulo(){
+        $ruta = '';
+        $date = Carbon::now();
+        $group_user = auth()->user()->group_id;
 
+        $cat_grupo = Category::query()->where('group_id', $group_user)->get('id');
+
+        $articulos = Article::query()->whereIn('category_id', $cat_grupo)->get();
+        //return $articulos;
+
+        return view('coadmin.registers.buscar_historial_articulo', compact('articulos', 'ruta', 'date'));
+    }
+
+    public function historial_articulo(){
+        $ruta = '';
+        $fecha = [];
+
+        $articulo = Article::find(request()->articulos);
+        $historial = Line::with('usuario', 'articulos', 'personal')->where(['article_id' => request()->articulos])->get();
+
+        foreach($historial as $hist){            
+            $fecha[] = Carbon::parse($hist->updated_at)->format('d-m-Y');
+        }
+        //return $historial;
+        return view('coadmin.registers.historial_articulo', compact('historial', 'ruta', 'articulo', 'fecha'));
+    }
 
 
 
@@ -345,29 +469,7 @@ class CoadminController extends Controller
     
 
        
-    public function buscar_historial_articulo(){
-        $ruta = '';
-        $date = Carbon::now();
-
-        $articulos = Article::all();
-        //return $articulos;
-
-        return view('admin.registers.buscar_historial_articulo', compact('articulos', 'ruta', 'date'));
-    }
-
-    public function historial_articulo(){
-        $ruta = '';
-        $fecha = [];
-
-        $articulo = Article::find(request()->articulos);
-        $historial = Line::with('usuario', 'articulos', 'personal')->where(['article_id' => request()->articulos])->get();
-
-        foreach($historial as $hist){            
-            $fecha[] = Carbon::parse($hist->updated_at)->format('d-m-Y');
-        }
-        //return $historial;
-        return view('admin.registers.historial_articulo', compact('historial', 'ruta', 'articulo', 'fecha'));
-    }
+    
 
 /*
     public function reset_password(Request $request){
