@@ -47,6 +47,7 @@
 
   <!-- Gráficos Artículos -->
   <div class="row g-3 mb-3">
+    
 
     <!-- Artículos Disponibles x Categoría -->
     <div class="col-md-12 col-xxl-12">
@@ -78,58 +79,59 @@
   <!-- Contenido -->
 @endsection
 @section('script')
+
   <!-- Artículos Disponibles x Categoría -->
-  <script>
-    var dataDisponiblesxCategoria = @json($articulosDisponiblexCategoria);
-    var cat = @json($categorias);
-    var categorias = [];
-    console.log(cat);
-    console.log(cat.length);
+    <script>
+      var dataDisponiblesxCategoria = @json($articulosDisponiblexCategoria);
+      var cat = @json($categorias);
+      var categorias = [];
+      console.log(cat);
+      console.log(cat.length);
 
-    for(var i=0; i<cat.length; i++){
-      categorias  = cat[i];
-      console.log(cat[i]);
-    }
-    
-    console.log("Categorías -> " + cat);
-    Highcharts.chart('containerArticulosxcategoria', {
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Artículos'
-        },
-        xAxis: {
-            categories: cat,
-            crosshair: true
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Cantidad'
-            }
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:5px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f} piezas</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 1
-            }
-        },
-        series: [{
-            name: 'Disponibles',
-            data: dataDisponiblesxCategoria
+      for(var i=0; i<cat.length; i++){
+        categorias  = cat[i];
+        console.log(cat[i]);
+      }
+      
+      console.log("Categorías -> " + cat);
+      Highcharts.chart('containerArticulosxcategoria', {
+          chart: {
+              type: 'column'
+          },
+          title: {
+              text: 'Artículos'
+          },
+          xAxis: {
+              categories: cat,
+              crosshair: true
+          },
+          yAxis: {
+              min: 0,
+              title: {
+                  text: 'Cantidad'
+              }
+          },
+          tooltip: {
+              headerFormat: '<span style="font-size:5px">{point.key}</span><table>',
+              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                  '<td style="padding:0"><b>{point.y:.1f} piezas</b></td></tr>',
+              footerFormat: '</table>',
+              shared: true,
+              useHTML: true
+          },
+          plotOptions: {
+              column: {
+                  pointPadding: 0.2,
+                  borderWidth: 1
+              }
+          },
+          series: [{
+              name: 'Disponibles',
+              data: dataDisponiblesxCategoria
 
-        }]
-    });
-  </script>
+          }]
+      });
+    </script>
   <!-- Artículos Disponibles x Categoría -->
 
   <!-- Artículos Asignados, Robados & Extraviados en Cantidad -->

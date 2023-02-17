@@ -824,7 +824,7 @@ class AdministradorController extends Controller
         $articulos = Article::all();
         //return $articulos;
 
-        return view('admin.registers.buscar_historial_articulo', compact('articulos', 'ruta', 'date'));
+        return view('admin.historial.buscar_historial_articulo', compact('articulos', 'ruta', 'date'));
     }
 
     public function historial_articulo(){
@@ -838,8 +838,32 @@ class AdministradorController extends Controller
             $fecha[] = Carbon::parse($hist->updated_at)->format('d-m-Y');
         }
         //return $historial;
-        return view('admin.registers.historial_articulo', compact('historial', 'ruta', 'articulo', 'fecha'));
+        return view('admin.historial.historial_articulo', compact('historial', 'ruta', 'articulo', 'fecha'));
+    }  
+
+    public function buscar_historial_persona(){
+        $ruta = '';
+        $date = Carbon::now();
+
+        $personas = Personal::all();
+        //return $articulos;
+
+        return view('admin.historial.buscar_historial_persona', compact('personas', 'ruta', 'date'));
     }
+
+    public function historial_persona(){
+        $ruta = '';
+        $fecha = [];
+
+        $persona = Personal::find(request()->persona);
+        $historial = Line::with('usuario', 'articulos')->where(['personal_id' => $persona->id])->get();
+
+        foreach($historial as $hist){            
+            $fecha[] = Carbon::parse($hist->updated_at)->format('d-m-Y');
+        }
+        //return $historial;
+        return view('admin.historial.historial_persona', compact('historial', 'ruta', 'persona', 'fecha'));
+    } 
 
     
     /****************************************/

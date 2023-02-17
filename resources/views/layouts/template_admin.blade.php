@@ -261,6 +261,11 @@
                     <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-book"></span></span><span class="nav-link-text ps-1">Articulo</span>
                     </div>
                   </a>
+                  <!-- parent pages-->
+                  <a class="nav-link" href="{{ route('resguardo.buscar_historial_persona') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-user-tie"></span></span><span class="nav-link-text ps-1">Persona</span>
+                    </div>
+                  </a>
                 </li>
 
 
