@@ -149,5 +149,104 @@ class ReceptorController extends Controller
         }else{
             return  redirect()->to('/resguardo_receptor_buscar_persona');
         }
+    }   
+
+    public function resguardo_buscar_articulo(){
+        
+        $ruta = '';
+        $date = Carbon::now();
+
+        $articulos = Article::where(['status' => 'Asignado'])->get();
+        return view('receptor.registers.buscar_articulo', compact('ruta', 'articulos', 'date'));
+    }
+
+    public function asignado_articulo(){
+        
+        $ruta = '';
+        $asignado = [];
+        
+        $articulos = Article::all();
+        $articulo = Article::find(request()->articulos);
+        $asignado = Line::with('usuario', 'personal')->where(['article_id'=>$articulo[0]->id, 'status'=> 'Activo'])->get();
+        //return $asignado;
+        return view('receptor.registers.asignado_articulo', compact('asignado', 'ruta', 'articulo'));       
+    }
+
+    public function actualizar_asignado_articulo(){
+        //return request();
+        if(request()->status == 'Asignado'){
+            return  redirect()->to('/resguardo_receptor_buscar_articulo');
+        }else{
+            Line::query()->where(['id' => request()->id])->update(['status' => 'Inactivo']);        
+            $linea = Line::find(request()->id);
+            $articulo = Article::query()->where(['id' => request()->article_id])->update(['status' => request()->status, 'comentario1' => request()->comentario1]);
+            $fecha = Carbon::parse($linea->updated_at)->format('d-m-Y');
+    
+            //return $fecha;
+            $ruta = '../storage/app/reports/';
+            if(request()->hasFile('image')){
+    
+                //return 'Sí hay imagen';
+                $imagen = request()->file('image');
+                $nombre_imagen = Str::slug($linea->article_id." - ".$fecha).".".$imagen->guessExtension();
+                //return $nombre_imagen;
+    
+                copy($imagen->getRealPath(), $ruta.$nombre_imagen);
+            }
+
+            return  redirect()->to('/resguardo_receptor_buscar_persona');
+        }
+    }
+
+    
+    /****************************************/
+    /*************** Historial **************/
+    /****************************************/    
+    public function buscar_historial_articulo(){
+        $ruta = '';
+        $date = Carbon::now();
+
+        $articulos = Article::all();
+        //return $articulos;
+
+        return view('receptor.historial.buscar_historial_articulo', compact('articulos', 'ruta', 'date'));
+    }
+
+    public function historial_articulo(){
+        $ruta = '';
+        $fecha = [];
+
+        $articulo = Article::find(request()->articulos);
+        $historial = Line::with('usuario', 'articulos', 'personal')->where(['article_id' => request()->articulos])->get();
+
+        foreach($historial as $hist){            
+            $fecha[] = Carbon::parse($hist->updated_at)->format('d-m-Y');
+        }
+        //return $historial;
+        return view('receptor.historial.historial_articulo', compact('historial', 'ruta', 'articulo', 'fecha'));
+    }  
+
+    public function buscar_historial_persona(){
+        $ruta = '';
+        $date = Carbon::now();
+
+        $personas = Personal::all();
+        //return $articulos;
+
+        return view('receptor.historial.buscar_historial_persona', compact('personas', 'ruta', 'date'));
+    }
+
+    public function historial_persona(){
+        $ruta = '';
+        $fecha = [];
+
+        $persona = Personal::find(request()->persona);
+        $historial = Line::with('usuario', 'articulos')->where(['personal_id' => $persona->id])->get();
+
+        foreach($historial as $hist){            
+            $fecha[] = Carbon::parse($hist->updated_at)->format('d-m-Y');
+        }
+        //return $historial;
+        return view('receptor.historial.historial_persona', compact('historial', 'ruta', 'persona', 'fecha'));
     } 
 }

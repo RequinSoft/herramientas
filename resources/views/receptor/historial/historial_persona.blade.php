@@ -1,4 +1,4 @@
-@extends('layouts.template_admin')
+@extends('layouts.template_receptor')
 
 @section('title', 'TG - Resumen Resguardo Nuevo')
 
@@ -79,7 +79,7 @@
       <br>
       <div class="col-sm-12 mb-3">
         <center>
-        <a href="{{route('resguardo.buscar_historial_persona')}}" class="btn btn-primary btn-user btn-block">
+        <a href="{{route('resguardo.receptor_buscar_historial_persona')}}" class="btn btn-primary btn-user btn-block">
             Regresar
         </a> 
         </center>                 

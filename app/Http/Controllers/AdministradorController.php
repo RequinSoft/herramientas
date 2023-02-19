@@ -155,6 +155,10 @@ class AdministradorController extends Controller
             ]
         );
 
+        
+        $usuario = User::create(request(['user', 'name', 'email', 'password', 'comment1', 'comment2', 'role_id', 'group_id', 'action_by']));
+        $last = User::all()->last()->id;
+
         $ruta = '../storage/app/avatars/';
         if(request()->hasFile('image')){
 
@@ -164,12 +168,11 @@ class AdministradorController extends Controller
             //return $nombre_imagen;
 
             copy($imagen->getRealPath(), $ruta.$nombre_imagen);
+            
+            $update = User::query()->where(['id' => $last])->update(['ext'=>$imagen->guessExtension()]);
         }
 
 
-        $usuario = User::create(request(['user', 'name', 'email', 'password', 'comment1', 'comment2', 'role_id', 'group_id', 'action_by']));
-        $last = User::all()->last()->id;
-        $update = User::query()->where(['id' => $last])->update(['ext'=>$imagen->guessExtension()]);
         
         return  redirect()->to('/admin_usuarios')->with('user_add', $usuario->user);
     }
