@@ -1,221 +1,271 @@
-@extends('layouts.template_user')
+@extends('layouts.template_receptor')
 
-@section('title', 'Principal User')
+@section('title', 'TG - Dashboards')
 
 @section('content')
+  <!-- Contenido -->
+  <div class="row g-3 mb-3">
 
- <!-- Begin Page Content -->
- <div class="container-fluid">
-
-
-    <!-- Content Row -->
-    <div class="row">
-        
-        <!-- Creados Card -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Remisiones Creadas</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-center">{{$creados}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Valor del Inventario -->
+    <div class="col-md-6 col-xxl-6">
+      <div class="card h-md-100 ecommerce-card-min-width">
+        <div class="card-header pb-0">
+          <h6 class="mb-0 mt-2 d-flex align-items-center">Valor del Inventario<span class="ms-1 text-400" data-bs-toggle="tooltip" data-bs-placement="top" title="Depreciación aplicada"><span class="far fa-question-circle" data-fa-transform="shrink-1"></span></span></h6>
         </div>
-
-        <!-- Aprobados  Card  -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Remisiones Aprobadas</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-center">{{$aprobados}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-green-300"></i>
-                        </div>
-                    </div>
-                </div>
+        <div class="card-body d-flex flex-column justify-content-end">
+          <div class="row">
+            <div class="col">
+              <p class="font-sans-serif lh-1 mb-1 fs-4">$ {{ number_format($valorInventario, 0, ".", ",") }} </p>
             </div>
-        </div>
-
-        <!-- Articulos  Card  -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Categorías</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-center">{{$categorias}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-green-300"></i>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-auto ps-0">
             </div>
+          </div>
         </div>
-        
-        <!-- Articulos  Card  -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Artículos</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-center">{{$articulos}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-green-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+    <!-- Valor del Inventario -->
 
-    <!-- Content Row -->
-    <div class="row">
-        <div class="col-xl-12 col-lg-10">
-
-            <!-- Bar Chart -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Artículos Dsiponibles Vs En Reparación</h6>
-                </div>
-                <div class="card-body">
-                    <div class="chart-bar">
-                        <canvas id="myBarChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
+    <!-- Pérdidas este Mes -->
+    <div class="col-md-6 col-xxl-6">
+      <div class="card h-md-100">
+        <div class="card-header pb-0">
+          <h6 class="mb-0 mt-2">Pérdidas este Mes</h6>
         </div>
+        <div class="card-body d-flex flex-column justify-content-end">
+          <div class="row justify-content-between">
+            <div class="col-auto align-self-end">
+              <div class="fs-4 fw-normal font-sans-serif text-700 lh-1 mb-1">$ {{ number_format($articuloRobado, 0, ".", ",") }}</div>
+            </div>
+            <div class="col-auto ps-0 mt-n4">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <!-- Pérdidas este Mes -->
+  </div>
+
+  <!-- Gráficos Artículos -->
+  <div class="row g-3 mb-3">
+    
+
+    <!-- Artículos Disponibles x Categoría -->
+    <div class="col-md-12 col-xxl-12">
+      <div id="containerArticulosxcategoria" class="card-body">
+      </div>
+    </div>
+    <!-- Artículos Disponibles x Categoría -->
+
+    <!-- Artículos Disponibles y Asignados en Cantidad -->
+    <div class="col-md-12 col-xxl-12">
+      <div id="containerArticulos" class="card-body">
+      </div>
+    </div>
+    <!-- Artículos Disponibles y Asignados en Cantidad -->
+    
+    <!-- Artículos Disponibles y Asignados en Moneda -->
+    <div class="col-md-12 col-xxl-12">
+      <div id="containerArticulosMonetizados" class="card-body">
+      </div>
+    </div>
+    <!-- Artículos Disponibles y Asignados en Moneda -->
+
+  </div>
+  <!-- Gráficos Artículos -->
+  
+
+  
+
+  <!-- Contenido -->
+@endsection
+@section('script')
+
+  <!-- Artículos Disponibles x Categoría -->
+    <script>
+      var dataDisponiblesxCategoria = @json($articulosDisponiblexCategoria);
+      var cat = @json($categorias);
+      var categorias = [];
+      console.log(cat);
+      console.log(cat.length);
+
+      for(var i=0; i<cat.length; i++){
+        categorias  = cat[i];
+        console.log(cat[i]);
+      }
+      
+      console.log("Categorías -> " + cat);
+      Highcharts.chart('containerArticulosxcategoria', {
+          chart: {
+              type: 'column'
+          },
+          title: {
+              text: 'Artículos'
+          },
+          xAxis: {
+              categories: cat,
+              crosshair: true
+          },
+          yAxis: {
+              min: 0,
+              title: {
+                  text: 'Cantidad'
+              }
+          },
+          tooltip: {
+              headerFormat: '<span style="font-size:5px">{point.key}</span><table>',
+              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                  '<td style="padding:0"><b>{point.y:.1f} piezas</b></td></tr>',
+              footerFormat: '</table>',
+              shared: true,
+              useHTML: true
+          },
+          plotOptions: {
+              column: {
+                  pointPadding: 0.2,
+                  borderWidth: 1
+              }
+          },
+          series: [{
+              name: 'Disponibles',
+              data: dataDisponiblesxCategoria
+
+          }]
+      });
+    </script>
+  <!-- Artículos Disponibles x Categoría -->
+
+  <!-- Artículos Asignados, Robados & Extraviados en Cantidad -->
+  <script>
+    var dataAsignados = @json($articulosAsignadosxMes);
+    var dataRobados = @json($articulosRobadosxMes);
+    var dataExtraviados = @json($articulosExtraviadosxMes);
+    console.log(dataAsignados);
+    Highcharts.chart('containerArticulos', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Artículos'
+        },
+        xAxis: {
+            categories: [
+                'Ene',
+                'Feb',
+                'Mar',
+                'Abr',
+                'May',
+                'Jun',
+                'Jul',
+                'Ago',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dic'
+            ],
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Cantidad'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:5px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} piezas</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 1
+            }
+        },
+        series: [{
+            name: 'Asignados',
+            data: dataAsignados
+
+        },{
+            name: 'Robados',
+            data: dataRobados
+
+        }, {
+            name: 'Extraviados',
+            data: dataExtraviados
+
+        }]
+    });
+  </script>
+  <!-- Artículos Asignados, Robados & Extraviados en Cantidad -->
 
 
+  <!-- Artículos Robados y Extraviados en Dinero -->
+  <script>
+    var dataRobados_Moneda = @json($articulosRobadosxMes_Moneda);
+    var dataExtraviados_Moneda = @json($articulosExtraviadosxMes_Moneda);
+    console.log(dataExtraviados_Moneda);
 
-</div>
-<!-- /.container-fluid -->
 
+    Highcharts.chart('containerArticulosMonetizados', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Artículos Monetizados'
+        },
+        xAxis: {
+            categories: [
+                'Ene',
+                'Feb',
+                'Mar',
+                'Abr',
+                'May',
+                'Jun',
+                'Jul',
+                'Ago',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dic'
+            ],
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: '$'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:5px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 1
+            }
+        },
+        series: [{
+            name: 'Robados',
+            data: dataRobados_Moneda
+
+        }, {
+            name: 'Extraviados',
+            data: dataExtraviados_Moneda
+
+        }]
+    });
+  </script>
+  <!-- Artículos Robados y Extraviados en Dinero -->
 @endsection
 
-@section('script')
-    <!-- Script para la gráfica de barras Articulos Disponibles/En Reparación -->
-    <script>
-        
-        var cantidad = {!! $cantidad !!};
-
-        var maximo = Math.max.apply(null, cantidad);
-        maximo = maximo + 1;
-        
-        console.log('Máximo ' + maximo);
-        var categorias = {!! $labels !!};
-        var disponibles = {!! $disponibles !!};
-        var reparacion = {!! $reparacion !!};
-        var ctx = document.getElementById("myBarChart");
-
-        var myBarChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: categorias,
-            display: 'true',
-            datasets: [
-            {
-                label: "Disponibles",
-                backgroundColor: "#4e73df",
-                hoverBackgroundColor: "#2e59d9",
-                borderColor: "#4e73df",
-                data: disponibles,
-            },
-            {
-                label: "En Reparación",
-                backgroundColor: "#FF0000",
-                hoverBackgroundColor: "#F80000",
-                borderColor: "#4e73df",
-                data: reparacion,
-            }],
-            
-        },
-        options: {
-            maintainAspectRatio: false,
-            layout: {
-            padding: {
-                left: 10,
-                right: 25,
-                top: 25,
-                bottom: 0
-            }
-            },
-            scales: {
-            xAxes: [{
-                stacked: true,
-                time: {
-                unit: 'month'
-                },
-                gridLines: {
-                display: true,
-                drawBorder: false
-                },
-                ticks: {
-                maxTicksLimit: 6
-                },
-                maxBarThickness: 25,
-            }],
-            yAxes: [{
-                stacked: true,
-                ticks: {
-                min: 0,
-                max: maximo,
-                maxTicksLimit: 5,
-                padding: 10,
-                // Include a dollar sign in the ticks
-                callback: function(value, index, values) {
-                    return  number_format(value);
-                }
-                },
-                gridLines: {
-                color: "rgb(234, 236, 244)",
-                zeroLineColor: "rgb(234, 236, 244)",
-                drawBorder: false,
-                borderDash: [2],
-                zeroLineBorderDash: [2]
-                }
-            }],
-            },
-            legend: {
-                display: true
-            },
-            tooltips: {
-            titleMarginBottom: 10,
-            titleFontColor: '#6e707e',
-            titleFontSize: 14,
-            backgroundColor: "rgb(255,255,255)",
-            bodyFontColor: "#858796",
-            borderColor: '#dddfeb',
-            borderWidth: 1,
-            xPadding: 15,
-            yPadding: 15,
-            displayColors: false,
-            caretPadding: 10,
-            callbacks: {
-                label: function(tooltipItem, chart) {
-                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                return datasetLabel + ': ' + number_format(tooltipItem.yLabel);
-                }
-            }
-            },
-        }
-        });
-    </script>
+@section('css')
 @endsection

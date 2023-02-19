@@ -282,6 +282,7 @@ class CoadminController extends Controller
         foreach($resguardos as $resguardo){
             $personal[] = Personal::query()->where('id', $resguardo->personal_id)->get();             
         }
+
         return view('coadmin.registers.buscar_persona', compact('ruta', 'personal'));
     }
 
@@ -407,7 +408,6 @@ class CoadminController extends Controller
             return  redirect()->to('/resguardo_coadmin_buscar_persona');
         }
     }
-
     
     /****************************************/
     /*************** Historial **************/
@@ -422,7 +422,7 @@ class CoadminController extends Controller
         $articulos = Article::query()->whereIn('category_id', $cat_grupo)->get();
         //return $articulos;
 
-        return view('coadmin.registers.buscar_historial_articulo', compact('articulos', 'ruta', 'date'));
+        return view('coadmin.historial.buscar_historial_articulo', compact('articulos', 'ruta', 'date'));
     }
 
     public function historial_articulo(){
@@ -436,8 +436,48 @@ class CoadminController extends Controller
             $fecha[] = Carbon::parse($hist->updated_at)->format('d-m-Y');
         }
         //return $historial;
-        return view('coadmin.registers.historial_articulo', compact('historial', 'ruta', 'articulo', 'fecha'));
+        return view('coadmin.historial.historial_articulo', compact('historial', 'ruta', 'articulo', 'fecha'));
     }
+
+    public function buscar_historial_persona(){
+        $ruta = '';
+        $date = Carbon::now();
+        $personas=[];
+
+        $id_grupo = auth()->user()->group_id;
+        
+        $cat_grupo = Category::query()->where('group_id', $id_grupo)->get('id');
+
+        $articulos_grupo = Article::query()->whereIn('category_id', $cat_grupo)->get('id');
+        $resguardos = Line::query()->whereIn('article_id', $articulos_grupo)->distinct()->get('personal_id');
+
+        foreach($resguardos as $resguardo){
+            $personas[] = Personal::query()->where('id', $resguardo->personal_id)->get();             
+        }
+        //return $personas;
+        
+        return view('coadmin.historial.buscar_historial_persona', compact('personas', 'ruta', 'date'));
+    }
+
+    public function historial_persona(){
+        $ruta = '';
+        $fecha = [];
+        
+        $id_grupo = auth()->user()->group_id;        
+        $cat_grupo = Category::query()->where('group_id', $id_grupo)->get('id');
+        $articulos_grupo = Article::query()->whereIn('category_id', $cat_grupo)->get('id');
+
+        $persona = Personal::find(request()->persona);
+        $historial = Line::with('usuario', 'articulos')->where(['personal_id' => $persona->id])->whereIn('article_id', $articulos_grupo)->get();
+
+        //return $historial;
+
+        foreach($historial as $hist){            
+            $fecha[] = Carbon::parse($hist->updated_at)->format('d-m-Y');
+        }
+        
+        return view('coadmin.historial.historial_persona', compact('historial', 'ruta', 'persona', 'fecha'));
+    } 
 
 
 

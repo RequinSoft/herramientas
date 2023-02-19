@@ -133,24 +133,8 @@
                 
                 <li class="nav-item">
                   <!-- parent pages-->
-                  <a class="nav-link" href="{{ route('coadmin.index') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                  <a class="nav-link" href="{{ route('receptor.index') }}" role="button" data-bs-toggle="" aria-expanded="false">
                     <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-chart-pie"></span></span><span class="nav-link-text ps-1">Dashboard</span>
-                    </div>
-                  </a>
-                </li>
-
-                <li class="nav-item">
-                  <!-- label-->
-                  <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-                    <div class="col-auto navbar-vertical-label">Administración
-                    </div>
-                    <div class="col ps-0">
-                      <hr class="mb-0 navbar-vertical-divider" />
-                    </div>
-                  </div>
-                  <!-- parent pages-->
-                  <a class="nav-link" href="{{ route('articulos.coadmin_index') }}" role="button" data-bs-toggle="" aria-expanded="false">
-                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-comments"></span></span><span class="nav-link-text ps-1">Artículos</span>
                     </div>
                   </a>
                 </li>
@@ -164,28 +148,13 @@
                       <hr class="mb-0 navbar-vertical-divider" />
                     </div>
                   </div>
-
-                  
-                  <!-- parent pages-->
-                  <a class="nav-link dropdown-indicator" href="#herramientas" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="grupos">
-                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-tools"></span></span><span class="nav-link-text ps-1">Herramientas</span>
-                    </div>
-                  </a>
-                  <ul class="nav collapse" id="herramientas">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('resguardo.coadmin_nuevo') }}" data-bs-toggle="" aria-expanded="false">
-                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Asignar</span>
-                        </div>
-                      </a>
-                      <!-- more inner pages-->
-                    </li>
-                  </ul>
                   <!-- parent pages-->
                   <a class="nav-link dropdown-indicator" href="#buscar" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="grupos">
                     <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-search"></span></span><span class="nav-link-text ps-1">Buscar</span>
                     </div>
                   </a>
                   <ul class="nav collapse" id="buscar">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('resguardo.coadmin_buscar_persona') }}" data-bs-toggle="" aria-expanded="false">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('resguardo.receptor_buscar_persona') }}" data-bs-toggle="" aria-expanded="false">
                         <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Persona</span>
                         </div>
                       </a>

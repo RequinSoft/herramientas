@@ -3,17 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdministradorController;
-use App\Http\Controllers\PrincipalController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\GroupController;
-use App\Http\Controllers\Ldap;
-use App\Http\Controllers\PlacesController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CoadminController;
-use App\Http\Controllers\GraficasController;
-use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\ReceptorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -388,25 +379,13 @@ Route::controller(CoadminController::class)->group(function(){
         ->middleware('auth.coadmin')
         ->name('resguardo.coadmin_historial_articulo');
 
-
-
-            
+    Route::get('/coadmin_buscar_historial_persona', 'buscar_historial_persona')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_buscar_historial_persona');
         
-        
-                    
-        
-        
-            
-         
-            
-        
-        
-        
-            
-        
-
-            
-        
+    Route::post('/coadmin_historial_persona', 'historial_persona')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.coadmin_historial_persona');
 });
 
 
@@ -416,5 +395,29 @@ Route::controller(CoadminController::class)->group(function(){
 /************************************ */
 /************************************ */
 Route::controller(ReceptorController::class)->group(function(){
+
+    Route::get('/receptor_index','index_admin')
+        ->middleware('auth.receptor')
+        ->name('receptor.index');
+
+    /**********************/
+    /**********************/
+    /***** Resguardos *****/
+        
+    Route::get('/resguardo_receptor_buscar_persona', 'resguardo_buscar_persona')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_buscar_persona');
+
+    Route::get('/resguardo_receptor_editar/{id}', 'resguardo_editar')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_editar');
+
+    Route::get('/resguardo_receptor_editar_linea/{linea}', 'resguardo_editar_linea')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_editarlinea'); 
+
+    Route::post('/resguardo_receptor_actualizar_linea', 'resguardo_actualizar_linea')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_actualizarLinea');
 
 });

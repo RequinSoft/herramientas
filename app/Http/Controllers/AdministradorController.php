@@ -204,9 +204,9 @@ class AdministradorController extends Controller
             //return $nombre_imagen;
 
             copy($imagen->getRealPath(), $ruta.$nombre_imagen);
+            $updateext = User::query()->where(['id' => $id])->update(['ext' => $imagen->guessExtension()]);
         }
 
-        $updateext = User::query()->where(['id' => $id])->update(['ext' => $imagen->guessExtension()]);
         //return $user;
         $mensaje = "".$user[0]->user;
 
