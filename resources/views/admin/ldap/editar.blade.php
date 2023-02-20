@@ -39,7 +39,7 @@
                         <input class="form-control" id="ldap_domain" name="ldap_domain" type="text" value="{{ $ldap->ldap_domain }}" />
                     </div>
                     <div class="col-sm-6 mb-3">
-                        <label class="form-label" for="event-venue">Puerto</label>
+                        <label class="form-label" for="event-venue">Versión</label>
                         <input class="form-control" id="ldap_version" name="ldap_version" type="text" value="{{ $ldap->ldap_version }}" />
                     </div>
                     <div class="col-sm-6 mb-3">

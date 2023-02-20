@@ -46,13 +46,13 @@ class ReceptorController extends Controller
         $esteAno = $fecha->format('Y');
 
         // Valor Inventario
-        $valorInventario = Article::query()->whereIn('status',['Disponible', 'Asignado', 'En Reparacion'])->get()->sum('precio_actual');
+        $entregados = Article::query()->whereIn('status',['Entregado'])->get()->count();
         // Artículos Robados
-        $articuloRobado = Article::query()->whereIn('status',['Robado', 'Extraviado'])->whereMonth('updated_at', $esteMes)->whereYear('updated_at', $esteAno)->get()->sum('precio_actual');
+        $articuloRobado_Extraviado = Article::query()->whereIn('status',['Robado', 'Extraviado'])->whereMonth('updated_at', $esteMes)->whereYear('updated_at', $esteAno)->get()->sum('precio_actual');
         // Procentaje de artículos
         $cat = Category::where('status', 'activo')->whereNot('category', 'Default')->get();
         foreach($cat as $categoria){
-            $articulosDisponiblexCategoria[] = [Article::where('status', 'Disponible')->where('category_id', $categoria->id)->count()];
+            $articulosDisponiblexCategoria[] = [Article::where('status', 'Entregado')->where('category_id', $categoria->id)->count()];
             $categorias[] = $categoria->category;
         }
 
@@ -68,7 +68,7 @@ class ReceptorController extends Controller
             $articulosExtraviadosxMes_Moneda [] = [Article::query()->whereIn('status',['Extraviado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->sum('precio_actual')];
         }
                 
-        return view('receptor.index', compact('ruta', 'valorInventario', 'articuloRobado', 'esteMes', 'categorias', 'articulosDisponiblexCategoria', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes', 'articulosRobadosxMes_Moneda', 'articulosExtraviadosxMes_Moneda'));
+        return view('receptor.index', compact('ruta', 'entregados', 'articuloRobado_Extraviado', 'esteMes', 'categorias', 'articulosDisponiblexCategoria', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes', 'articulosRobadosxMes_Moneda', 'articulosExtraviadosxMes_Moneda'));
     }
 
     
@@ -128,7 +128,8 @@ class ReceptorController extends Controller
         
         Line::query()->where(['id' => request()->id_linea])->update(['status' => 'Inactivo']);
         $linea = Line::find(request()->id_linea);
-        $articulo = Article::query()->where(['id' => $linea->article_id])->update(['status' => request()->status, 'comentario1' => request()->comentario1]);
+        
+        $articulo = Article::query()->where(['id' => $linea->article_id])->update(['status' => request()->status, 'comentario1' => request()->comentario1o]);
         
         $fecha = Carbon::parse($linea->updated_at)->format('d-m-Y');
 
@@ -196,6 +197,14 @@ class ReceptorController extends Controller
 
             return  redirect()->to('/resguardo_receptor_buscar_persona');
         }
+    }
+
+    public function resguardo_reportes(){        
+        $ruta = '';
+
+        $resguardos = Line::query()->where('status', 'Activo')->distinct()->get('personal_id');
+
+        return $resguardos;
     }
 
     

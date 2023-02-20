@@ -148,6 +148,12 @@
                       <hr class="mb-0 navbar-vertical-divider" />
                     </div>
                   </div>
+                  <!-- parent pages
+                  <a class="nav-link" href="{{ route('resguardo.receptor_reportes') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-book"></span></span><span class="nav-link-text ps-1">Reportes</span>
+                    </div>
+                  </a>
+                  -->
                   <!-- parent pages-->
                   <a class="nav-link dropdown-indicator" href="#buscar" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="grupos">
                     <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-search"></span></span><span class="nav-link-text ps-1">Buscar</span>

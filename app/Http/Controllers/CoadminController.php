@@ -41,9 +41,10 @@ class CoadminController extends Controller
         $esteMes = $fecha->format('m');
         $esteAno = $fecha->format('Y');
         $id = auth()->user()->id;
+        $id_group = auth()->user()->group_id;
 
         //Obtener el grupo del Usuario
-        $grupo = Group::query()->where('id', $id)->get();
+        $grupo = Group::query()->where('id', $id_group)->get();
         
         //Categorías del Grupo al que pertence el usuario
         $cat_grupo = Category::query()->where('group_id', $grupo[0]->id)->get('id');
@@ -70,7 +71,7 @@ class CoadminController extends Controller
             $articulosRobadosxMes_Moneda [] = [Article::query()->whereIn('status',['Robado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->whereIn('category_id', $cat_grupo)->get()->sum('precio_actual')];
             $articulosExtraviadosxMes_Moneda [] = [Article::query()->whereIn('status',['Extraviado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->whereIn('category_id', $cat_grupo)->get()->sum('precio_actual')];
         }
-                
+        //return $id_group;
         return view('coadmin.index', compact('ruta', 'valorInventario', 'articuloRobado', 'esteMes', 'categorias', 'articulosDisponiblexCategoria', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes', 'articulosRobadosxMes_Moneda', 'articulosExtraviadosxMes_Moneda'));
     }
 

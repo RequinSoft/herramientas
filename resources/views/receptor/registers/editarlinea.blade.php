@@ -72,6 +72,7 @@
                         <option value="Baja"> Baja</option>    
                       </select>
                 </td>
+
                 <td>
                     <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" id="comentario1" name="comentario1" >
                     </textarea>

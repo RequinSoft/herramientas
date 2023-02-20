@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('modelo');
             $table->integer('precio_inicial');
             $table->integer('precio_actual')->nullable()->default("0");
+            $table->integer('precio_cobrado')->nullable()->default("0");
             $table->string('comentario1')->nullable();
 
             

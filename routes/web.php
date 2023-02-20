@@ -432,23 +432,27 @@ Route::controller(ReceptorController::class)->group(function(){
         ->middleware('auth.receptor')
         ->name('resguardo.actualizar_receptor_asignado_articulo');
 
+        Route::get('/resguardo_reportes', 'resguardo_reportes')
+            ->middleware('auth.receptor')
+            ->name('resguardo.receptor_reportes');
+
     /****************************/
     /****************************/
     /******** Historial *********/  
-        Route::get('/receptor_buscar_historial_articulo', 'buscar_historial_articulo')
-            ->middleware('auth.receptor')
-            ->name('resguardo.receptor_buscar_historial_articulo');
-            
-        Route::post('/receptor_historial_articulo', 'historial_articulo')
-            ->middleware('auth.receptor')
-            ->name('resguardo.receptor_historial_articulo');
-    
-        Route::get('/receptor_buscar_historial_persona', 'buscar_historial_persona')
-            ->middleware('auth.receptor')
-            ->name('resguardo.receptor_buscar_historial_persona');
-            
-        Route::post('/receptor_historial_persona', 'historial_persona')
-            ->middleware('auth.receptor')
-            ->name('resguardo.receptor_historial_persona');
+    Route::get('/receptor_buscar_historial_articulo', 'buscar_historial_articulo')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_buscar_historial_articulo');
+        
+    Route::post('/receptor_historial_articulo', 'historial_articulo')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_historial_articulo');
+
+    Route::get('/receptor_buscar_historial_persona', 'buscar_historial_persona')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_buscar_historial_persona');
+        
+    Route::post('/receptor_historial_persona', 'historial_persona')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_historial_persona');
 
 });
