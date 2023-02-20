@@ -68,10 +68,7 @@
                 <td class="text-end">{{ $articulo->created_at }}</td>
                 <td class="text-center">
                     <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="status" id="status">
-                        <option value="Disponible"> Entregado</option>
-                        <option value="En Reparacion"> En Reparación</option>
-                        <option value="Extraviado"> Extraviado</option>  
-                        <option value="Robado"> Robado</option>  
+                        <option value="Entregado"> Entregado</option>
                         <option value="Baja"> Baja</option>    
                       </select>
                 </td>

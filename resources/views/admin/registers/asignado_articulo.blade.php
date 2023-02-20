@@ -94,6 +94,10 @@
                                     $baj_selected = "selected";
                                     # code...
                                     break;
+                                case 'Entregado':
+                                    $baj_selected = "selected";
+                                    # code...
+                                    break;
                                 
                                 default:
                                     # code...
@@ -107,6 +111,7 @@
                         <option class="text-end" value="Robado"{{$rob_selected}}> Robado</option>
                         <option class="text-end" value="Extraviado"{{$ext_selected}}> Extraviado</option>
                         <option class="text-end" value="Baja"{{$baj_selected}}> Baja</option>
+                        <option class="text-end" value="Entregado"{{$baj_selected}}> Entregado</option>
                     </select>
                 </td> 
                 <td><input class="form-control" id="comentario" name="comentario" type="text" /></td>

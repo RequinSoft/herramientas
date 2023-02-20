@@ -56,7 +56,7 @@
             <th class="text-center sort" data-sort="acciones">Fecha</th>
             <th class="text-center sort" data-sort="acciones">Acciones</th>
             <th class="text-center sort" data-sort="comentario">Comentarios</th>
-            <th class="text-center sort" data-sort="comentario">Reporte</th>
+            <th class="text-center sort" data-sort="reporte">Reporte</th>
           </tr>
         </thead>
         <tbody class="list">
@@ -68,11 +68,12 @@
                 <td class="text-end">{{ $articulo->created_at }}</td>
                 <td class="text-center">
                     <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="status" id="status">
-                        <option value="Disponible"> Entregado</option>
+                        <option value="Disponible"> Disponible</option>
                         <option value="En Reparacion"> En Reparación</option>
                         <option value="Extraviado"> Extraviado</option>  
                         <option value="Robado"> Robado</option>  
-                        <option value="Baja"> Baja</option>    
+                        <option value="Baja"> Baja</option>
+                        <option value="Entregado"> Entregado</option>       
                       </select>
                 </td>
                 <td>

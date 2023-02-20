@@ -70,24 +70,12 @@
                         $ext_selected = '';
                         $baj_selected = '';
                             switch ($articulo[0]->status) {
-                                case 'Asignado':
+                                case 'Entregado':
                                     $asig_selected = "selected";
                                     # code...
                                     break;
-                                case 'Disponible':
+                                case 'Cobrado':
                                     $dis_selected = "selected";
-                                    # code...
-                                    break;
-                                case 'En Reparacion':
-                                    $rep_selected = "selected";
-                                    # code...
-                                    break;
-                                case 'Robado':
-                                    $rob_selected = "selected";
-                                    # code...
-                                    break;
-                                case 'Extraviado':
-                                    $ext_selected = "selected";
                                     # code...
                                     break;
                                 case 'Baja':
@@ -101,11 +89,8 @@
                             }
 
                         @endphp
-                        <option class="text-end" value="Disponible" {{$dis_selected}}> Disponible</option>
-                        <option class="text-end" value="Asignado" {{$asig_selected}}> Asignado</option>
-                        <option class="text-end" value="En Reparacion"{{$rep_selected}}> En Reparacion</option>
-                        <option class="text-end" value="Robado"{{$rob_selected}}> Robado</option>
-                        <option class="text-end" value="Extraviado"{{$ext_selected}}> Extraviado</option>
+                        <option class="text-end" value="Entregado" {{$dis_selected}}> Entregado</option>
+                        <option class="text-end" value="Cobrado" {{$asig_selected}}> Cobrado</option>
                         <option class="text-end" value="Baja"{{$baj_selected}}> Baja</option>
                     </select>
                 </td> 

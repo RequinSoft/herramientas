@@ -72,7 +72,7 @@
                         <option value="En Reparacion"> En Reparación</option>
                         <option value="Extraviado"> Extraviado</option>  
                         <option value="Robado"> Robado</option>  
-                        <option value="Baja"> Baja</option>    
+                        <option value="Baja"> Baja</option>       
                       </select>
                 </td>
                 <td>

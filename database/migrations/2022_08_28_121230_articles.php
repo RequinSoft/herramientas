@@ -29,7 +29,7 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id')->default(1);
             $table->foreign('category_id')->references('id')->on('categories');
 
-            $table->enum('status', ['Disponible', 'Asignado', 'En Reparacion', 'Robado', 'Extraviado', 'Baja'])->default("Disponible");
+            $table->enum('status', ['Disponible', 'Asignado', 'En Reparacion', 'Robado', 'Extraviado', 'Baja', 'Entregado', 'Cobrado'])->default("Disponible");
             
             $table->timestamps();
         });
