@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'ToolGuardian'),
+    'name' => env('APP_NAME', 'Herramientas'),
 
     /*
     |--------------------------------------------------------------------------
@@ -29,6 +29,18 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Version
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the "version" your application is currently
+    | running in. 
+    |
+    */
+
+    'version' => 'v1.53.00',
 
     /*
     |--------------------------------------------------------------------------
@@ -69,7 +81,7 @@ return [
     |
     */
 
-    'timezone' => 'America/Mexico_City',
+    'timezone' => 'America/Mazatlan',
 
     /*
     |--------------------------------------------------------------------------
@@ -181,7 +193,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
+        
         /*
          * Package Service Providers...
          */
@@ -194,7 +206,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+        Barryvdh\DomPDF\ServiceProvider::class,
     ],
 
     /*
@@ -210,6 +222,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
     ])->toArray(),
 
 ];

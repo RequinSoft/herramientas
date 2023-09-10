@@ -1,6 +1,6 @@
 @extends('layouts.template_coadmin')
 
-@section('title', 'TG - Nuevos Resguardos')
+@section('title', 'Nuevos Resguardos')
 
 @section('content')
 

@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
         $user->role_id = "1";
         $user->group_id = "1";
         $user->auten = "1";
-        $user->email = "admin@murmainc.mx";
+        $user->email = "";
         $user->password = "admin";
         $user->status = "1";
         $user->save();

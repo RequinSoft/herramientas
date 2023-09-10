@@ -19,7 +19,12 @@ use LaravelDaily\LaravelCharts\Classes\LaravelChart;
 use App\Mail\SalidasMailable;
 use Faker\Provider\ar_EG\Person;
 use Illuminate\Support\Facades\Mail;
-
+use App\Http\Requests;
+use PDF;
+use App\Http\Requests\UserEditRequest;
+use App\Http\Requests\PersonalEditRequest;
+use App\Http\Requests\CategoryEditRequest;
+use App\Http\Requests\GroupsEditRequest;
 
 use Illuminate\Http\Request;
 
@@ -42,18 +47,23 @@ class AdministradorController extends Controller
         $articulosExtraviadosxMes_Moneda = [];
         $articulosDisponiblexCategoria = [];
         $categorias = [];
+        $totalArticulos = [];
+        $totalArticulosDinero = [];
 
         $fecha = Carbon::now();
         $esteMes = $fecha->format('m');
         $esteAno = $fecha->format('Y');
 
         // Valor Inventario
-        $valorInventario = Article::query()->whereIn('status',['Disponible', 'Asignado', 'En Reparacion'])->get()->sum('precio_actual');
+        $valorInventario = Article::query()->whereIn('status',['Disponible', 'Asignado', 'En Reparacion', 'Recibido'])->get()->sum('precio_actual');
         // Artículos Robados
         $articuloRobado = Article::query()->whereIn('status',['Robado', 'Extraviado'])->whereMonth('updated_at', $esteMes)->whereYear('updated_at', $esteAno)->get()->sum('precio_actual');
         // Procentaje de artículos
         $cat = Category::where('status', 'activo')->whereNot('category', 'Default')->get();
         foreach($cat as $categoria){
+            $totalArticulos[] = Article::query()->get()->whereIn('status', ['Disponible', 'Asignado', 'En Reparacion', 'Recibido'])->where('category_id', $categoria->id)->count();
+            $totalArticulosDinero[] = Article::query()->get()->whereIn('status', ['Disponible', 'Asignado', 'En Reparacion', 'Recibido'])->where('category_id', $categoria->id)->sum('precio_actual');
+            
             $articulosDisponiblexCategoria[] = [Article::where('status', 'Disponible')->where('category_id', $categoria->id)->count()];
             $categorias[] = $categoria->category;
         }
@@ -70,7 +80,7 @@ class AdministradorController extends Controller
             $articulosExtraviadosxMes_Moneda [] = [Article::query()->whereIn('status',['Extraviado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->sum('precio_actual')];
         }
                 
-        return view('admin.index', compact('ruta', 'valorInventario', 'articuloRobado', 'esteMes', 'categorias', 'articulosDisponiblexCategoria', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes', 'articulosRobadosxMes_Moneda', 'articulosExtraviadosxMes_Moneda'));
+        return view('admin.index', compact('ruta', 'totalArticulos', 'totalArticulosDinero', 'valorInventario', 'articuloRobado', 'esteMes', 'categorias', 'articulosDisponiblexCategoria', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes', 'articulosRobadosxMes_Moneda', 'articulosExtraviadosxMes_Moneda'));
     }
 
     public function password($id){
@@ -105,12 +115,13 @@ class AdministradorController extends Controller
         }
         $usuario = User::query()->where(['id' => $id])->update(['password' => bcrypt($request->password)]);
 
-        
-        $email[] = $user->email;
+        if(empty($user->email)){
             
-        $correo = new ResetPass($user->name, request('password'));
-        
-        Mail::to($user->email)->send($correo);
+        }else{
+            $email[] = $user->email;            
+            $correo = new ResetPass($user->name, request('password'));            
+            Mail::to($user->email)->send($correo);
+        }        
 
         return  redirect()->to('/admin_usuarios')->with('pass', $user->name);
     }
@@ -118,7 +129,7 @@ class AdministradorController extends Controller
     public function users_admin(){
 
         $ruta = '';
-        $usuarios = User::with('group', 'role')->get()->where('status', 'activo');
+        $usuarios = User::with('group', 'role')->get();
         $user = auth()->user()->user;
 
         return view('admin.users.index', compact('usuarios', 'user', 'ruta'));
@@ -156,7 +167,7 @@ class AdministradorController extends Controller
         );
 
         
-        $usuario = User::create(request(['user', 'name', 'email', 'password', 'comment1', 'comment2', 'role_id', 'group_id', 'action_by']));
+        $usuario = User::create(request(['user', 'name', 'auten', 'email', 'password', 'comment1', 'comment2', 'role_id', 'group_id', 'action_by']));
         $last = User::all()->last()->id;
 
         $ruta = '../storage/app/avatars/';
@@ -171,8 +182,6 @@ class AdministradorController extends Controller
             
             $update = User::query()->where(['id' => $last])->update(['ext'=>$imagen->guessExtension()]);
         }
-
-
         
         return  redirect()->to('/admin_usuarios')->with('user_add', $usuario->user);
     }
@@ -189,12 +198,13 @@ class AdministradorController extends Controller
         return view('admin.users.editar', compact('usuarios', 'grupos', 'roles', 'ruta', 'ldap'));
     }
 
-    public function actualizar(){
+    public function actualizar(UserEditRequest $request){
+        
 
         $id = request (['id']);
         $logged_user = auth()->user()->id;
 
-        $updateuser = User::query()->where(['id' => $id])->update(request(['user', 'name', 'email', 'role_id', 'group_id', 'auten', 'comment1', 'comment2']));
+        $updateuser = User::query()->where(['id' => $id])->update(request(['user', 'name', 'email', 'role_id', 'group_id', 'auten', 'comment1', 'comment2', 'status']));
         $usuario = User::query()->where(['id' => $id])->update(['action_by' => $logged_user]);
         $user = User::find($id);
 
@@ -242,7 +252,7 @@ class AdministradorController extends Controller
     public function personal_admin(){
 
         $ruta = '';
-        $personal = Personal::with('group')->get()->where('status', 'activo');
+        $personal = Personal::with('group')->get();
         $user = auth()->user()->user;
         
         return view('admin.personal.index', compact('personal', 'user', 'ruta'));
@@ -260,14 +270,17 @@ class AdministradorController extends Controller
         
         $this->validate(request(), [
                 'nombre' => 'required|unique:personal',
-                'puesto' => 'required',
+                'id' => 'required|unique:personal',
             ],
             [
                 'nombre.required' => 'El nombre es obligatorio',
-                'puesto.required' => 'El puesto es obligatorio',
                 'nombre.unique' => 'El nombre ya existe',
+                'id.required' => 'El ID es obligatorio',
+                'id.unique' => 'El ID ya existe',
             ]
         );
+
+
 
         $personal = Personal::create(request(['nombre', 'puesto', 'group_id']));
         $last = Personal::all()->last()->id;
@@ -282,9 +295,9 @@ class AdministradorController extends Controller
             //return $nombre_imagen;
 
             copy($imagen->getRealPath(), $ruta.$nombre_imagen);
-        }
 
-        $update = Personal::query()->where(['id' => $last])->update(['ext'=>$imagen->guessExtension()]);
+            $update = Personal::query()->where(['id' => $last])->update(['ext'=>$imagen->guessExtension()]);
+        }        
 
         return  redirect()->to('/admin_personal')->with('user_add', $personal->nombre);
     }
@@ -299,30 +312,48 @@ class AdministradorController extends Controller
         return view('admin.personal.editar', compact('personal', 'grupos', 'ruta'));
     }
 
-    public function personal_actualizar(){
+    public function personal_actualizar(PersonalEditRequest $request){
 
-        $id = request (['id']);
+
+        $id_viejo = request (['id_viejo']);
+        $id_old = $request->get('id_viejo');
         $nombre = "personal_".request()->id;
         $logged_user = auth()->user()->id;
 
-        $updateuser = Personal::query()->where(['id' => $id])->update(request(['nombre', 'puesto', 'group_id']));
-        $user = Personal::find($id);
+        //return $id_viejo;
+        $existe = Personal::query()->where(['id' => request()->id])->count();
+        $existe1= Personal::query()->where(['id' => request()->id])->get();
+        //return $existe."--".$id_old."--".$existe1[0]->id;
 
-        $ruta = '../storage/app/avatars/';
-        if(request()->hasFile('image')){
+        if($existe > 0 && $id_old != $existe1[0]->id){
+            
+            $mensaje = "El ID ".request()->id." ya existe!";
+            //return  redirect()->to('/editar_personal/'.$id_viejo);
+            return  redirect()->to('/editar_personal/'.$id_old)->with('mensaje_update', $mensaje);
 
-            //return 'Sí hay imagen';
-            $imagen = request()->file('image');
-            $nombre_imagen = Str::slug($nombre).".".$imagen->guessExtension();
-            //return $nombre_imagen;
+        }else{
 
-            copy($imagen->getRealPath(), $ruta.$nombre_imagen);
+            $updateuser = Personal::query()->where(['id' => $id_viejo])->update(request(['id', 'nombre', 'puesto', 'group_id', 'status']));
+            $user = Personal::find(request()->id);
+
+
+            $ruta = '../storage/app/avatars/';
+            if(request()->hasFile('image')){
+
+                //return 'Sí hay imagen';
+                $imagen = request()->file('image');
+                $nombre_imagen = Str::slug($nombre).".".$imagen->guessExtension();
+                //return $nombre_imagen;
+
+                copy($imagen->getRealPath(), $ruta.$nombre_imagen);
+                $updateext = Personal::query()->where(['id' => request (['id'])])->update(['ext' => $imagen->guessExtension()]);
+            }
+
+            //return $user;
+            $mensaje = "".$user->nombre;
+            //return $mensaje;
+            return  redirect()->to('/admin_personal')->with('user_update', $mensaje);
         }
-        $updateext = Personal::query()->where(['id' => $id])->update(['ext' => $imagen->guessExtension()]);
-
-        //return $user;
-        $mensaje = "".$user[0]->nombre;
-        return  redirect()->to('/admin_personal')->with('user_update', $mensaje);
     }
 
     public function personal_inactivar($id){
@@ -385,7 +416,7 @@ class AdministradorController extends Controller
         return view('admin.categorias.editar', compact('datos', 'ruta'));
     }
 
-    public function categoria_actualizar(Request $request){
+    public function categoria_actualizar(CategoryEditRequest $request){
 
         $id = $request->id;
         $logged_user = auth()->user()->id;
@@ -460,7 +491,7 @@ class AdministradorController extends Controller
         return view('admin.groups.editar', compact('grupos', 'ruta'));
     }
 
-    public function actualizar_grupo(){
+    public function actualizar_grupo(GroupsEditRequest $request){
         //return 'Actualizar Grupos';
         $id = request (['id']);
         $logged_user = auth()->user()->id;
@@ -547,39 +578,51 @@ class AdministradorController extends Controller
                 'article' => 'required',
                 'modelo' => 'required',
                 'precio_inicial' => 'required',
-                'ns' => 'required|unique:articles',
-                'created_at' => 'required',
+                'ns' => 'required'
             ],
             [
                 'article.required' => 'El Artículo es Obligatorio',
                 'modelo.required' => 'El Modelo es Obligatorio',
                 'ns.required' => 'El Número de Serie es Obligatorio',
-                'ns.unique' => 'El Número de Serie ya existe',
-                'created_at.required' => 'La Fecha es obligatoria',
             ]
         );
 
-        //return request();
-        $datos = Article::create(request(['article', 'precio_inicial', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1']));
-        $last = Article::all()->last()->id;
-        $hoy = Carbon::now();
-        $update = Article::query()->where(['id' => $last])->update(['created_at' => request()->created_at]);
-        $articulo = Article::find($last);
+        $existe = Article::query()->where(['ns' => request('ns')])->count();
+        $articulo = Article::query()->where(['ns' => request('ns')])->get();
 
-        $categoria = Category::find(request()->category_id);
-        $depreciacion = $categoria->depreciacion;
-        $dias_restar = ($articulo->created_at)->diffInDays($hoy);
+        
+        if($existe == 1 && $articulo[0]->status == 'Baja'){
+            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_baja', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
+        }else if($existe == 1 && $articulo[0]->status == 'Disponible'){
+            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
+        }else{
 
-        $dias_precio = $depreciacion - $dias_restar;
+            $datos = Article::create(request(['article', 'precio_inicial', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1']));
+            $last = Article::all()->last()->id;
+            $hoy = Carbon::now();
 
-        $precio_actual = ((request()->precio_inicial)/$depreciacion) * $dias_precio;
-        $precio_actual = (int)$precio_actual;
-        if($precio_actual <= 0){
-            $precio_actual = 0;
+            $fecha = request()->created_at;
+            if(empty(request('created_at'))){
+                $fecha = $hoy;
+            }
+            $update = Article::query()->where(['id' => $last])->update(['created_at' => $fecha]);
+            $articulo = Article::find($last);
+    
+            $categoria = Category::find(request()->category_id);
+            $depreciacion = $categoria->depreciacion;
+            $dias_restar = ($articulo->created_at)->diffInDays($hoy);
+    
+            $dias_precio = $depreciacion - $dias_restar;
+    
+            $precio_actual = ((request()->precio_inicial)/$depreciacion) * $dias_precio;
+            $precio_actual = (int)$precio_actual;
+            if($precio_actual <= 0){
+                $precio_actual = 0;
+            }
+            $update2 = Article::query()->where(['id' => $last])->update(['precio_actual' => $precio_actual]);
+    
+            return  redirect()->to('/admin_articulos')->with('articulo_add', $datos->article);
         }
-        $update2 = Article::query()->where(['id' => $last])->update(['precio_actual' => $precio_actual]);
-
-        return  redirect()->to('/admin_articulos')->with('articulo_add', $datos->article);
     }
 
     public function articulos_editar($id){
@@ -596,11 +639,31 @@ class AdministradorController extends Controller
 
         $id = request (['id']);
         $ns = "Artículo ".request()->article." -- N/S ".request()->ns;
-        
-        $updatedatos = Article::query()->where(['id' => $id])->update(request(['article', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1', 'precio_inicial']));
-        //$usuario = Category::query()->where(['id' => $id])->update(['action_by' => $logged_user]);
+        $existe = Article::query()->where(['ns' => request('ns')])->count();
+        $articulo = Article::find($id);
+        $articulo_status = Article::query()->where(['ns' => request('ns')])->get();        
+        //return $articulo;
+        //return $articulo_status[0]->ns;
+        //return $mensaje;
 
-        return  redirect()->to('/admin_articulos')->with('articulo_update', $ns);
+        if(empty($articulo_status[0]->status)){
+            $updatedatos = Article::query()->where(['id' => $id])->update(request(['article', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1', 'precio_inicial', 'created_at']));
+            return  redirect()->to('/admin_articulos')->with('articulo_update', $ns);
+        }else{
+            $mensaje = $articulo_status[0]->status;
+            if($existe == 1 && $articulo_status[0]->status == 'Baja' && request('ns') != $articulo[0]->ns){
+                return  redirect()->to('/admin_articulos')->with('articulo_desactivado', $mensaje)->with('id_articulo', $articulo_status[0]->id)->with('articulo_ns', $articulo_status[0]->ns);
+            }elseif($existe == 1 && $articulo_status[0]->status == 'Disponible' && request('ns') != $articulo[0]->ns){
+                return  redirect()->to('/admin_articulos')->with('articulo_disponible', $mensaje)->with('id_articulo', $articulo[0]->id)->with('articulo_ns', $articulo_status[0]->ns);
+            }else{
+                $updatedatos = Article::query()->where(['id' => $id])->update(request(['article', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1', 'precio_inicial', 'created_at']));
+                return  redirect()->to('/admin_articulos')->with('articulo_update', $ns);
+            }
+        }
+
+
+        
+        
     }
 
     public function articulo_inactivar($id){
@@ -610,6 +673,16 @@ class AdministradorController extends Controller
         $info = $articulo->article." con N/S ".$articulo->ns;
 
         return  redirect()->to('/admin_articulos')->with('info', $info);
+    }
+
+    public function articulo_activar($id){
+
+        //return $id;
+        $datos = Article::query()->where(['id' => $id])->update(['status' => 'disponible']);
+        $articulo = Article::find($id);
+        $info = $articulo->article." con N/S ".$articulo->ns;
+
+        return  redirect()->to('/admin_articulos')->with('info_activado', $info);
     }
 
     
@@ -631,7 +704,7 @@ class AdministradorController extends Controller
         $ruta = '';
         $articulos = Article::with('category')->where('status', 'Disponible')->get();
         $grupos = Group::all();
-        $personal = Personal::all();
+        $personal = Personal::query()->where('status', 'activo')->get();
         //return $articulos;
         return view('admin.registers.nuevo', compact('articulos', 'grupos', 'personal', 'ruta'));
     }
@@ -674,10 +747,30 @@ class AdministradorController extends Controller
 
     public function resguardo_crear(){
         //return request();
-        //return request()->personal_id;
-        //return request()->users_id;
-        //return request()->articulos;
-        $ruta = '';
+        $persona = Personal::find(request()->personal_id);
+        //return $persona;
+        $fecha = Carbon::now();
+        $hoy = $fecha->format('d-m-Y');
+
+        $ruta = '';        
+        $ruta_firma = '../storage/app/firmas/';
+        $nombre_imagen = 'persona_' . request()->personal_id . '_fecha_' . $hoy;
+
+        $image_parts = explode(";base64,", request()->signed);
+             
+        $image_type_aux = explode("image/", $image_parts[0]);
+           
+        $image_type = $image_type_aux[1];
+           
+        $image_base64 = base64_decode($image_parts[1]);
+ 
+        $signature = $nombre_imagen. '.'.$image_type;
+           
+        $file = $ruta_firma . $signature;
+
+
+        file_put_contents($file, $image_base64);
+        
 
         foreach(request()->articulos as $articulos){
             
@@ -687,11 +780,12 @@ class AdministradorController extends Controller
             $lines->users_id = auth()->user()->id;
             $lines->comentario = "";
             $lines->status = "Activo";
+            $lines->firma = $file;
             $lines->save();
 
             $update = Article::query()->where(['id' => $articulos])->update(['status' => "Asignado"]);
         }
-        return  redirect()->to('/admin_index');
+        return  redirect()->to('/admin_index')->with('resguardo_add', $persona->nombre);
     }
 
     public function resguardo_buscar_persona(){
@@ -816,6 +910,100 @@ class AdministradorController extends Controller
         }
     }
 
+    public function admin_firma_modal(){
+
+    }
+
+    public function admin_entregados(){
+        
+        $ruta = '';
+
+        $entregados = Article::query()->where('status', 'Entregado')->get();
+        //return $entregados;
+        //$linea = Line::find($entregados[0]->comentario1);
+        //return $linea;
+        
+        return view('admin.registers.buscar_entregados', compact('ruta', 'entregados'));
+    }
+
+    public function crear_resguardopdf($id){
+
+        //return $id;
+        $ruta = '';
+        $articulo = [];
+        $depto = [];
+        
+        $fecha = Carbon::now();
+        $dia = $fecha->format('d');
+        $mes = $fecha->format('m');
+        $anio = $fecha->format('Y');
+
+        switch($mes){
+            case('01'):
+                $mes = 'Enero';
+                break;
+            case('02'):
+                $mes = 'Febrero';
+                break;
+            case('03'):
+                $mes = 'Marzo';
+                break;
+            case('04'):
+                $mes = 'Abril';
+                break;
+            case('05'):
+                $mes = 'Mayo';
+                break;
+            case('06'):
+                $mes = 'Junio';
+                break;
+            case('07'):
+                $mes = 'Julio';
+                break;
+            case('08'):
+                $mes = 'Agosto';
+                break;
+            case('09'):
+                $mes = 'Septiembre';
+                break;
+            case('10'):
+                $mes = 'Octubre';
+                break;
+            case('11'):
+                $mes = 'Noviembre';
+                break;
+            case('12'):
+                $mes = 'Diciembre';
+                break;
+        }
+        
+        $hoy = $dia." de ".$mes." del ".$anio;
+        $empresa = 'Minera Juanicipio';
+        $logged_user = auth()->user()->id;
+        $group_user = auth()->user()->group_id;
+                
+        $articulos_grupo = Article::query()->where('status', 'Asignado')->get('id');
+
+        $person = Personal::find($id);
+
+        $articulos = Line::with('articulos', 'usuario')->where('personal_id', $id)->whereIn('article_id', $articulos_grupo)->where('status', 'Activo')->get();
+
+        //return $articulos;
+        //Foreach para obtener los articulos en un arreglo y después obtener la suma
+        foreach($articulos as $art){
+            $articulo[] = $art->article_id;
+            $grupo = Category::find($art->articulos->category_id);
+            $depto[] = Group::query()->where('id', $grupo->group_id)->get('group');
+        }
+        //return $depto;
+        $suma = Article::query()->whereIn('id', $articulo)->get()->sum('precio_actual');
+
+
+        $pdf = PDF::loadView('layouts.pdf_admin', compact('logged_user', 'group_user', 'articulos', 'ruta', 'person', 'suma', 'empresa', 'hoy', 'depto'));
+        return $pdf->stream($person->nombre.'.pdf');
+
+    }
+
     
     /****************************************/
     /*************** Historial **************/
@@ -915,5 +1103,21 @@ class AdministradorController extends Controller
             return  redirect()->to('/server_ldap')->with('ldap_msg', "Conexión Fallida");
         }
     }
+
     
+    /****************************************/
+    /*************** Inactivos **************/
+    /****************************************/ 
+    public function inactivo_articulos(){
+        $ruta = '';
+        $datos = Article::query()->get()->whereNotIn('status', ['Disponible', 'Asignado']);
+
+        return view('admin.inactivos.articulos', compact('ruta', 'datos'));
+    }
+
+    public function inactivo_articulos_actualizar($id){        
+        $ruta = '../';
+
+        return $id;
+    }
 }

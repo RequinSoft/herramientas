@@ -12,12 +12,19 @@ use App\Models\Group;
 use App\Models\User;
 use App\Models\Personal;
 use App\Models\Line;
-use App\Models\Ldap;
+use PDF;
 use App\Mail\ResetPass;
 use LaravelDaily\LaravelCharts\Classes\LaravelChart;
 use App\Mail\SalidasMailable;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\PDF as DomPDFPDF;
 use Faker\Provider\ar_EG\Person;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Requests;
+use Illuminate\Http\Request;
+use App\Http\Requests\UserEditRequest;
+use App\Http\Requests\PersonalEditRequest;
+use App\Http\Requests\CategoryEditRequest;
 
 class CoadminController extends Controller
 {
@@ -35,6 +42,8 @@ class CoadminController extends Controller
         $articulosRobadosxMes_Moneda = [];
         $articulosExtraviadosxMes_Moneda = [];
         $articulosDisponiblexCategoria = [];
+        $totalArticulos = [];
+        $totalArticulosDinero = [];
         $categorias = [];
 
         $fecha = Carbon::now();
@@ -48,18 +57,22 @@ class CoadminController extends Controller
         
         //Categorías del Grupo al que pertence el usuario
         $cat_grupo = Category::query()->where('group_id', $grupo[0]->id)->get('id');
-        
+        //return $cat_grupo;
         // Valor Inventario
-        $valorInventario = Article::query()->whereIn('status',['Disponible', 'Asignado', 'En Reparacion'])->whereIn('category_id', $cat_grupo)->get()->sum('precio_actual');
+        $valorInventario = Article::query()->whereIn('status',['Disponible', 'Asignado', 'En Reparacion', 'Recibido'])->whereIn('category_id', $cat_grupo)->get()->sum('precio_actual');
         // Artículos Robados
         $articuloRobado = Article::query()->whereIn('status',['Robado', 'Extraviado'])->whereMonth('updated_at', $esteMes)->whereYear('updated_at', $esteAno)->whereIn('category_id', $cat_grupo)->get()->sum('precio_actual');
         // Procentaje de artículos
         $cat = Category::query()->where('status', 'activo')->whereNot('category', 'Default')->where('group_id', $grupo[0]->id)->get();
         foreach($cat as $categoria){
+            $articulosAsignadoxCategoria[] = [Article::where('status', 'Asignado')->where('category_id', $categoria->id)->count()];
             $articulosDisponiblexCategoria[] = [Article::where('status', 'Disponible')->where('category_id', $categoria->id)->count()];
+            $totalArticulos[] = Article::query()->get()->whereIn('status', ['Disponible', 'Asignado', 'En Reparacion', 'Recibido'])->where('category_id', $categoria->id)->count();
+            $totalArticulosDinero[] = Article::query()->get()->whereIn('status', ['Disponible', 'Asignado', 'En Reparacion', 'Recibido'])->where('category_id', $categoria->id)->sum('precio_actual');
             $categorias[] = $categoria->category;
         }
 
+        //return $dataPie;
         //Artículos por Status por mes en el año
         for($i=1; $i<=12; $i++){
             
@@ -71,8 +84,8 @@ class CoadminController extends Controller
             $articulosRobadosxMes_Moneda [] = [Article::query()->whereIn('status',['Robado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->whereIn('category_id', $cat_grupo)->get()->sum('precio_actual')];
             $articulosExtraviadosxMes_Moneda [] = [Article::query()->whereIn('status',['Extraviado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->whereIn('category_id', $cat_grupo)->get()->sum('precio_actual')];
         }
-        //return $id_group;
-        return view('coadmin.index', compact('ruta', 'valorInventario', 'articuloRobado', 'esteMes', 'categorias', 'articulosDisponiblexCategoria', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes', 'articulosRobadosxMes_Moneda', 'articulosExtraviadosxMes_Moneda'));
+        //return $articulosAsignadosxMes;
+        return view('coadmin.index', compact('ruta', 'valorInventario', 'totalArticulos', 'totalArticulosDinero', 'articuloRobado', 'esteMes', 'categorias', 'articulosDisponiblexCategoria', 'articulosAsignadoxCategoria', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes', 'articulosRobadosxMes_Moneda', 'articulosExtraviadosxMes_Moneda'));
     }
 
     
@@ -109,39 +122,47 @@ class CoadminController extends Controller
                 'article' => 'required',
                 'modelo' => 'required',
                 'precio_inicial' => 'required',
-                'ns' => 'required|unique:articles',
-                'created_at' => 'required',
+                'ns' => 'required',
             ],
             [
                 'article.required' => 'El Artículo es Obligatorio',
                 'modelo.required' => 'El Modelo es Obligatorio',
                 'ns.required' => 'El Número de Serie es Obligatorio',
-                'ns.unique' => 'El Número de Serie ya existe',
-                'created_at.required' => 'La Fecha es obligatoria',
             ]
         );
 
         //return request();
-        $datos = Article::create(request(['article', 'precio_inicial', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1']));
-        $last = Article::all()->last()->id;
-        $hoy = Carbon::now();
-        $update = Article::query()->where(['id' => $last])->update(['created_at' => request()->created_at]);
-        $articulo = Article::find($last);
-
-        $categoria = Category::find(request()->category_id);
-        $depreciacion = $categoria->depreciacion;
-        $dias_restar = ($articulo->created_at)->diffInDays($hoy);
-
-        $dias_precio = $depreciacion - $dias_restar;
-
-        $precio_actual = ((request()->precio_inicial)/$depreciacion) * $dias_precio;
-        $precio_actual = (int)$precio_actual;
-        if($precio_actual <= 0){
-            $precio_actual = 0;
+        $existe = Article::query()->where(['ns' => request('ns')])->count();
+        $articulo = Article::query()->where(['ns' => request('ns')])->get();
+        if($existe == 1){
+            return  redirect()->to('/coadmin_articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('articulo', $articulo[0]->status);
         }
-        $update2 = Article::query()->where(['id' => $last])->update(['precio_actual' => $precio_actual]);
-
-        return  redirect()->to('/coadmin_articulos')->with('articulo_add', $datos->article);
+        else{
+            $datos = Article::create(request(['article', 'precio_inicial', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1']));
+            $last = Article::all()->last()->id;
+            $hoy = Carbon::now();
+            $fecha = request()->created_at;
+            if(empty(request('created_at'))){
+                $fecha = $hoy;
+            }
+            $update = Article::query()->where(['id' => $last])->update(['created_at' => $fecha]);
+            $articulo = Article::find($last);
+    
+            $categoria = Category::find(request()->category_id);
+            $depreciacion = $categoria->depreciacion;
+            $dias_restar = ($articulo->created_at)->diffInDays($hoy);
+    
+            $dias_precio = $depreciacion - $dias_restar;
+    
+            $precio_actual = ((request()->precio_inicial)/$depreciacion) * $dias_precio;
+            $precio_actual = (int)$precio_actual;
+            if($precio_actual <= 0){
+                $precio_actual = 0;
+            }
+            $update2 = Article::query()->where(['id' => $last])->update(['precio_actual' => $precio_actual]);
+    
+            return  redirect()->to('/coadmin_articulos')->with('articulo_add', $datos->article);
+        }
     }
 
     public function articulos_editar($id){
@@ -159,10 +180,27 @@ class CoadminController extends Controller
 
         $id = request (['id']);
         $ns = "Artículo ".request()->article." -- N/S ".request()->ns;
-        
-        $updatedatos = Article::query()->where(['id' => $id])->update(request(['article', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1', 'precio_inicial']));
-        
-        return  redirect()->to('/coadmin_articulos')->with('articulo_update', $ns);
+        $existe = Article::query()->where(['ns' => request('ns')])->count();
+        $articulo = Article::find($id);
+        $articulo_status = Article::query()->where(['ns' => request('ns')])->get();        
+        //return $articulo;
+        //return $articulo_status[0]->ns;
+        //return $mensaje;
+
+        if(empty($articulo_status[0]->status)){
+            $updatedatos = Article::query()->where(['id' => $id])->update(request(['article', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1', 'precio_inicial', 'created_at']));
+            return  redirect()->to('/coadmin_articulos')->with('articulo_update', $ns);
+        }else{
+            $mensaje = $articulo_status[0]->status;
+            if($existe == 1 && $articulo_status[0]->status == 'Baja' && request('ns') != $articulo[0]->ns){
+                return  redirect()->to('/coadmin_articulos')->with('articulo_desactivado', $mensaje)->with('id_articulo', $articulo_status[0]->id)->with('articulo_ns', $articulo_status[0]->ns);
+            }elseif($existe == 1 && $articulo_status[0]->status == 'Disponible' && request('ns') != $articulo[0]->ns){
+                return  redirect()->to('/coadmin_articulos')->with('articulo_disponible', $mensaje)->with('id_articulo', $articulo[0]->id)->with('articulo_ns', $articulo_status[0]->ns);
+            }else{
+                $updatedatos = Article::query()->where(['id' => $id])->update(request(['article', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1', 'precio_inicial', 'created_at']));
+                return  redirect()->to('/coadmin_articulos')->with('articulo_update', $ns);
+            }
+        }
     }
 
     public function articulo_inactivar($id){
@@ -172,6 +210,108 @@ class CoadminController extends Controller
         $info = $articulo->article." con N/S ".$articulo->ns;
 
         return  redirect()->to('/coadmin_articulos')->with('info', $info);
+    }
+
+    public function articulo_activar($id){
+
+        //return $id;
+        $datos = Article::query()->where(['id' => $id])->update(['status' => 'disponible']);
+        $articulo = Article::find($id);
+        $info = $articulo->article." con N/S ".$articulo->ns;
+
+        return  redirect()->to('/coadmin_articulos')->with('info_activado', $info);
+    }
+    
+
+    /****************************************/
+    /************* Categorías ***************/
+    /****************************************/
+
+    public function categoria_index(){
+
+        $ruta = '';
+        $categorias = Category::all()->where('status', 'activo')->where('group_id', auth()->user()->group_id)->whereNotIn('category', 'Default');
+        $user = auth()->user()->user;
+
+        return view('coadmin.categorias.index', compact('categorias', 'user', 'ruta'));
+    }
+
+    public function categoria_nuevo(){
+
+        $ruta = '';
+        return view('coadmin.categorias.nuevo', compact('ruta'));
+    }
+
+    public function categoria_crear(Request $request){
+
+        $this->validate(request(), [
+                'category' => 'required|unique:categories',
+                'depreciacion' => 'required',
+            ],
+            [
+                'category.unique' => '¡La Categoría ya existe!',
+                'category.required' => 'La Categoría es Obligatoria',
+                'depreciacion.required' => 'La depreciación es Obligatoria',
+            ]
+        );
+        
+        $depreciacion = $request->depreciacion * 365;
+        $category = $request->category;
+        $descripcion = $request->description;
+        //return auth()->user()->group_id;
+        //return $category;
+        $datos = Category::create(['category'=>$category, 'description'=> $descripcion, 'depreciacion'=> $depreciacion, 'group_id'=> auth()->user()->group_id]);
+        return  redirect()->to('/coadmin_categorias')->with('add_categoria', $category);
+    }
+
+    public function categoria_editar($id){
+
+        $ruta = '../';
+        //return "Este es el id -> $id";
+        $datos = Category::find($id);
+
+        return view('coadmin.categorias.editar', compact('datos', 'ruta'));
+    }
+
+    public function categoria_actualizar(CategoryEditRequest $request){
+
+        $id = $request->id;
+        $logged_user = auth()->user()->id;
+
+        $depreciacion = $request->depreciacion * 365;
+        $category = $request->category;
+        $descripcion = $request->description;
+
+        $updatecategory = Category::query()->where(['id' => $id])->update(['category'=>$category, 'description'=>$descripcion, 'depreciacion'=>$depreciacion]);
+        //$usuario = Category::query()->where(['id' => $id])->update(['action_by' => $logged_user]);
+
+        return  redirect()->to('/coadmin_categorias')->with('update_categoria', $category);
+    }
+
+    public function intento_categoria_inactivar($id){
+
+        $category = Category::find($id);
+        return  redirect()->to('/coadmin_categorias')->with('inactivar', $category->category)->with('id', $category->id);
+    }
+
+    public function categoria_inactivar($id){
+        $grupo = Category::find($id);
+        $articulos = Article::query()->where('category_id', $grupo->id)->get();
+        $cantidad_articulos = Article::query()->where('category_id', $grupo->id)->count();
+
+
+        if($cantidad_articulos == 0){
+            $category = Category::query()->where(['id' => $id])->update(['status' => 'inactivo']);
+            return  redirect()->to('/coadmin_categorias')->with('categoria_inactivada', $grupo->category);
+        }else{
+            foreach($articulos as $articulos){                
+                $update_articulos = Article::query()->where('id', $articulos->id)->update(['category_id' => 1]);
+            }
+            $category = Category::query()->where(['id' => $id])->update(['status' => 'inactivo']);
+            return  redirect()->to('/coadmin_categorias')->with('info', $grupo->category);
+        }
+        //$category = Category::query()->where(['id' => $id])->update(['status' => 'inactivo']);
+        //return  redirect()->to('/coadmin_categorias')->with('info', $grupo->category);
     }
 
     
@@ -192,7 +332,7 @@ class CoadminController extends Controller
 
         $ruta = '';
         //$grupos = Group::all();
-        $personal = Personal::all();
+        $personal = Personal::query()->where('status', 'activo')->get();
         $id = auth()->user()->id;
 
         //Obtener el grupo del Usuario
@@ -248,7 +388,27 @@ class CoadminController extends Controller
         //return request()->personal_id;
         //return request()->users_id;
         //return request()->articulos;
+        $persona = Personal::find(request()->personal_id);
         $ruta = '';
+        $fecha = Carbon::now();
+        $hoy = $fecha->format('d-m-Y');
+        $ruta_firma = '../storage/app/firmas/';
+        $nombre_imagen = 'persona_' . request()->personal_id . '_fecha_' . $hoy;
+
+        $image_parts = explode(";base64,", request()->signed);
+             
+        $image_type_aux = explode("image/", $image_parts[0]);
+           
+        $image_type = $image_type_aux[1];
+           
+        $image_base64 = base64_decode($image_parts[1]);
+ 
+        $signature = $nombre_imagen. '.'.$image_type;
+           
+        $file = $ruta_firma . $signature;
+
+
+        file_put_contents($file, $image_base64);
 
         foreach(request()->articulos as $articulos){
             
@@ -257,12 +417,13 @@ class CoadminController extends Controller
             $lines->personal_id = request()->personal_id;
             $lines->users_id = auth()->user()->id;
             $lines->comentario = "";
+            $lines->firma = $file;
             $lines->status = "Activo";
             $lines->save();
 
             $update = Article::query()->where(['id' => $articulos])->update(['status' => "Asignado"]);
         }
-        return  redirect()->to('/coadmin_index');
+        return  redirect()->to('/coadmin_index')->with('resguardo_add', $persona->nombre);
     }
 
     public function resguardo_buscar_persona(){
@@ -409,6 +570,79 @@ class CoadminController extends Controller
             return  redirect()->to('/resguardo_coadmin_buscar_persona');
         }
     }
+
+    public function crear_resguardopdf($id){
+
+        //return $id;
+        $ruta = '';
+        
+        $fecha = Carbon::now();
+        $dia = $fecha->format('d');
+        $mes = $fecha->format('m');
+        $anio = $fecha->format('Y');
+
+        switch($mes){
+            case('01'):
+                $mes = 'Enero';
+                break;
+            case('02'):
+                $mes = 'Febrero';
+                break;
+            case('03'):
+                $mes = 'Marzo';
+                break;
+            case('04'):
+                $mes = 'Abril';
+                break;
+            case('05'):
+                $mes = 'Mayo';
+                break;
+            case('06'):
+                $mes = 'Junio';
+                break;
+            case('07'):
+                $mes = 'Julio';
+                break;
+            case('08'):
+                $mes = 'Agosto';
+                break;
+            case('09'):
+                $mes = 'Septiembre';
+                break;
+            case('10'):
+                $mes = 'Octubre';
+                break;
+            case('11'):
+                $mes = 'Noviembre';
+                break;
+            case('12'):
+                $mes = 'Diciembre';
+                break;
+        }
+
+        $hoy = $dia." de ".$mes." del ".$anio;
+        $empresa = 'Minera Juanicipio';
+        $logged_user = auth()->user()->id;
+        $group_user = auth()->user()->group_id;
+                
+        $cat_grupo = Category::query()->where('group_id', $group_user)->get('id');
+        $departamento = Group::query()->where('id', $group_user)->get();
+        $articulos_grupo = Article::query()->whereIn('category_id', $cat_grupo)->where('status', 'Asignado')->get('id');
+
+        $person = Personal::find($id);
+
+        $articulos = Line::with('articulos', 'usuario')->where('personal_id', $id)->whereIn('article_id', $articulos_grupo)->where('status', 'Activo')->get();
+
+        //Foreach para obtener los articulos en un arreglo y después obtener la suma
+        foreach($articulos as $art){
+            $articulo[] = $art->article_id;
+        }
+        $suma = Article::query()->whereIn('id', $articulo)->get()->sum('precio_actual');        
+
+        $pdf = PDF::loadView('layouts.pdf_coadmin', compact('logged_user', 'group_user', 'articulos', 'ruta', 'person', 'suma', 'empresa', 'hoy', 'departamento'));
+        return $pdf->stream($person->nombre.'.pdf');
+
+    }
     
     /****************************************/
     /*************** Historial **************/
@@ -480,37 +714,6 @@ class CoadminController extends Controller
         return view('coadmin.historial.historial_persona', compact('historial', 'ruta', 'persona', 'fecha'));
     } 
 
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-
-    
-
-        
-
-    
-
-    
-
-       
-    
 
 /*
     public function reset_password(Request $request){

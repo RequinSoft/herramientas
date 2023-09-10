@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Editar Usuario')
+@section('title', 'Editar Usuario')
 
 @section('content')
 <div class="card mb-3">
@@ -9,6 +9,7 @@
     </div>
     <div class="card-body bg-light">
         <form  action="{{ route('usuarios.actualizar') }}" method="POST" enctype="multipart/form-data">
+        @method('PUT')
         @csrf
         @php
             $hidden = "";
@@ -19,6 +20,21 @@
             <div class="row gx-2">             
                 <div class="col-sm-6 mb-3">
                     <input type="text" class="form-control" id="id" name="id" value="{{ $usuarios->id }}" hidden>
+                    @error('user')
+                        <small type="text" class="btn btn-danger btn-block">
+                            {{$message}}
+                        </small> 
+                    @enderror
+                    @error('name')
+                        <button type="text" disabled class="btn btn-danger btn-block" id="error" name="error">
+                            {{$message}}
+                        </button> 
+                    @enderror
+                    @error('email')
+                        <button type="text" disabled class="btn btn-danger btn-block" id="error" name="error">
+                            {{$message}}
+                        </button> 
+                    @enderror  
                 </div> 
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Foto de Perfil</label>
@@ -90,6 +106,24 @@
                     </select>
                 </div>
                 @endif
+                @php
+                    if($usuarios->status == 'activo'){
+                        $selected_activo = 'selected';
+                        $selected_inactivo = '';
+                    }elseif ($usuarios->status == 'inactivo') {                        
+                        $selected_activo = '';
+                        $selected_inactivo = 'selected';
+                    }
+                @endphp
+                
+                <div class="col-sm-6">
+                    <label class="form-label" for="time-zone">Estatus</label>
+                    <select class="form-select" id="status" name="status">
+                        <option style="color:green" value="activo" {{$selected_activo}}>activo</option>  
+                        <option style="color:red" value="inactivo" {{$selected_inactivo}}>inactivo</option> 
+                    </select>
+                </div>
+
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Custom 1</label>
                     <input class="form-control" id="comment1" name="comment1" type="text" value="{{ $usuarios->comment1 }}" />

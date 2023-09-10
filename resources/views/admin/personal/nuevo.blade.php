@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Nuevo Personal')
+@section('title', 'Nuevo Personal')
 
 @section('content') 
 
@@ -23,11 +23,21 @@
                             {{$message}}
                         </button>                 
                     @enderror
+                    @error('id')
+                        <br>
+                        <button type="text" disabled class="btn btn-danger btn-block"id="error" name="error">
+                            {{$message}}
+                        </button>                 
+                    @enderror
                 </div> 
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Foto de Perfil</label>
                     <input class="form-control"  type="file" name="image" id="image" />
                 </div> 
+                <div class="col-sm-6 mb-3">
+                    <label class="form-label" for="event-venue">ID</label>
+                    <input class="form-control" id="id" name="id" type="text" value="{{ old('id') }}" />
+                </div>
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Nombre Completo</label>
                     <input class="form-control" id="nombre" name="nombre" type="text" value="{{ old('nombre') }}" />

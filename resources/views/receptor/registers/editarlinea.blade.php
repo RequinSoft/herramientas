@@ -1,6 +1,6 @@
 @extends('layouts.template_receptor')
 
-@section('title', 'TG - Reportar Artículo')
+@section('title', 'Reportar Artículo')
 
 @section('content')
 
@@ -55,7 +55,6 @@
             <th class="text-center sort" data-sort="precio_actual">Costo Actual</th>
             <th class="text-center sort" data-sort="acciones">Fecha</th>
             <th class="text-center sort" data-sort="acciones">Acciones</th>
-            <th class="text-center sort" data-sort="comentario">Comentarios</th>
             <th class="text-center sort" data-sort="comentario">Reporte</th>
           </tr>
         </thead>
@@ -68,15 +67,12 @@
                 <td class="text-end">{{ $articulo->created_at }}</td>
                 <td class="text-center">
                     <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="status" id="status">
-                        <option value="Entregado"> Entregado</option>
-                        <option value="Baja"> Baja</option>    
+                        <option value="Recibido">Recibido</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Baja">Baja</option>    
                       </select>
                 </td>
 
-                <td>
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" id="comentario1" name="comentario1" >
-                    </textarea>
-                </td>
                 <td><input class="form-control" accept=".pdf"  type="file" name="image" id="image" /></td>
             </tr>
         </tbody>

@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Editar Artículos')
+@section('title', 'Editar Artículos')
 
 @section('content')
 <div class="card mb-3">
@@ -47,9 +47,13 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-sm-12 mb-3">
+                <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Descripción</label>
                     <input class="form-control" id="description" name="description" type="text" value="{{ $datos->description }}" />
+                </div>
+                <div class="col-sm-6 mb-3">
+                    <label class="form-label" for="datepicker">Fecha de Ingreso</label>
+                    <input class="form-control datetimepicker" name="created_at" type="text" value="{{ $datos->created_at }}" placeholder="d/m/y H:i" data-options='{"enableTime":true,"dateFormat":"Y-m-d H:i:S","disableMobile":true}' />
                 </div>
                             
                 <button type="submit" class="btn btn-primary btn-user btn-block">

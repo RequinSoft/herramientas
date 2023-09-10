@@ -25,6 +25,7 @@
     <link href="{{ $ruta }}../resources/vendors/choices/choices.min.css" rel="stylesheet">
     <link href="{{ $ruta }}../resources/vendors/prism/prism-okaidia.css" rel="stylesheet">
     <link href="{{ $ruta }}../resources/vendors/flatpickr/flatpickr.min.css" rel="stylesheet" />
+    
     @yield('css')
     <meta name="theme-color" content="#ffffff">
     <script src="{{ $ruta }}../resources/assets/js/config.js"></script>
@@ -43,33 +44,48 @@
     <link href="{{ $ruta }}../resources/assets/css/user-rtl.min.css" rel="stylesheet" id="user-style-rtl">
     <link href="{{ $ruta }}../resources/assets/css/user.min.css" rel="stylesheet" id="user-style-default">
     <link href="{{ $ruta }}../resources/vendors/dropzone/dropzone.min.css" rel="stylesheet" />
-    <style>
-      body, canvas, div, form, input {
-        margin: 0;
-        padding: 0;
-      }
-      #wrapper {
-        width: 100%;
-        padding: 1px;
-      }
-      canvas {
-        position: relative;
-        margin: 1px;
-        margin-left: 0px;
-        border: 1px solid #3a87ad;
-      }
-      h1, p {
-        padding-left: 2px;
-        width: 100%;
-        margin: 0 auto;
-      }
-      #controlPanel {
-        margin: 2px;
-      }
-      #saveSignature {
-        display: none;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="http://keith-wood.name/css/jquery.signature.css">
+    
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+<style>
+  body, canvas, div, form, input {
+    margin: 0;
+    padding: 0;
+  }
+  #wrapper {
+    width: 100%;
+    padding: 1px;
+  }
+  canvas {
+    position: relative;
+    margin: 1px;
+    margin-left: 0px;
+    border: 1px solid #3a87ad;
+  }
+  h1, p {
+    padding-left: 2px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  #controlPanel {
+    margin: 2px;
+  }
+  #saveSignature {
+    display: none;
+  }
+  .kbw-signature { width: 100%; height: 180px;}
+  #signaturePad canvas{
+  width: 100% !important;
+  height: auto;
+  }
+  #container: {
+    min-width: 310px;
+    height: 400px;
+    margin: 0 auto;
+  }
+</style>
     <script>
       var isRTL = JSON.parse(localStorage.getItem('isRTL'));
       if (isRTL) {
@@ -122,7 +138,7 @@
               <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
 
             </div><a class="navbar-brand" href="index.html">
-              <div class="d-flex align-items-center py-3"><img class="me-2" src="{{ $ruta }}../resources/assets/img/icons/spot-illustrations/toolguardian-blue.png" alt="" width="40" /><span class="font-sans-serif">TG</span>
+              <div class="d-flex align-items-center py-3"><img class="me-2" src="{{ $ruta }}../resources/assets/img/icons/spot-illustrations/toolguardian-blue.png" alt="" width="40" /><span class="font-sans-serif">{{ config('app.name') }}</span>
               </div>
             </a>
           </div>
@@ -151,6 +167,11 @@
                   <!-- parent pages-->
                   <a class="nav-link" href="{{ route('articulos.coadmin_index') }}" role="button" data-bs-toggle="" aria-expanded="false">
                     <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-comments"></span></span><span class="nav-link-text ps-1">Artículos</span>
+                    </div>
+                  </a>
+                  <!-- parent pages-->
+                  <a class="nav-link" href="{{ route('coadmin.categorias') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-layer-group"></span></span><span class="nav-link-text ps-1">Categorías</span>
                     </div>
                   </a>
                 </li>
@@ -290,7 +311,7 @@
                 <p class="mb-0 text-600"></span><br class="d-sm-none" /> 2022 &copy; <a href="#">BBB-SOFT</a></p>
               </div>
               <div class="col-12 col-sm-auto text-center">
-                <p class="mb-0 text-600">v1.00.0</p>
+                <p class="mb-0 text-600">{{ config('app.version') }}</p>
               </div>
             </div>
           </footer>

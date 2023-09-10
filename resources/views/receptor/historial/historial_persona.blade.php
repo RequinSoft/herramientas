@@ -1,6 +1,6 @@
 @extends('layouts.template_receptor')
 
-@section('title', 'TG - Resumen Resguardo Nuevo')
+@section('title', 'Resumen Resguardo')
 
 @section('content')
 
@@ -58,6 +58,8 @@
             <th class="text-center sort" data-sort="precio_actual">Costo Actual</th>
             <th class="text-center sort" data-sort="asignatario">Asignatario</th>
             <th class="text-center sort" data-sort="acciones">Fecha</th>
+            <th class="text-center sort" data-sort="acciones">Comentario</th>
+            <th class="text-center sort" data-sort="acciones">Estatus</th>
           </tr>
         </thead>
         <tbody class="list">
@@ -69,6 +71,13 @@
                 <td class="text-end precio_actual">$ {{ number_format($articulo->articulos->precio_actual, 0, ".", ",") }}</td>
                 <td class="text-end asignatario">{{ $articulo->usuario->name }}</td>
                 <td class="text-end">{{ $articulo->created_at }}</td>
+                <td class="text-end">{{ $articulo->comentario }}</td>
+                @if ($articulo->status == 'Inactivo')
+                    <td class="text-center"><label class="btn btn-danger btn-user btn-block">Histórico</label></td>
+                @else
+                    <td class="text-center"><label class="btn btn-success btn-user btn-block">{{ $articulo->status }}</label></td>
+                @endif
+                
             </tr>
             @php
                 $n++;

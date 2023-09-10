@@ -25,16 +25,16 @@
     </div>
     <!-- Pérdidas este Mes -->
 
-    <!-- xCobrar este Mes -->
+    <!-- Recibidos este Mes -->
     <div class="col-md-6 col-xxl-6">
       <div class="card h-md-100 ecommerce-card-min-width">
         <div class="card-header pb-0">
-          <h6 class="mb-0 mt-2 d-flex align-items-center">Entregados</h6>
+          <h6 class="mb-0 mt-2 d-flex align-items-center">Recibidos</h6>
         </div>
         <div class="card-body d-flex flex-column justify-content-end">
           <div class="row">
             <div class="text-end col">
-              <p class="font-sans-serif lh-1 mb-1 fs-4"> {{ $entregados }} </p>
+              <p class="font-sans-serif lh-1 mb-1 fs-4"> {{ $recibidos }} </p>
             </div>
             <div class="col-auto ps-0">
             </div>
@@ -42,19 +42,19 @@
         </div>
       </div>
     </div>
-    <!-- Cobrado este Mes -->
+    <!-- Recibidos este Mes -->
   </div>
 
   <!-- Gráficos Artículos -->
   <div class="row g-3 mb-3">
     
 
-    <!-- Artículos Disponibles x Categoría -->
+    <!-- Artículos Recibidos & Entregados x Categoría -->
     <div class="col-md-12 col-xxl-12">
       <div id="containerArticulosEntregadosxcategoria" class="card-body">
       </div>
     </div>
-    <!-- Artículos Disponibles x Categoría -->
+    <!-- Artículos Recibidos & Entregados x Categoría -->
 
     <!-- Artículos Disponibles y Asignados en Cantidad -->
     <div class="col-md-12 col-xxl-12">
@@ -82,7 +82,8 @@
 
   <!-- Artículos Disponibles x Categoría -->
     <script>
-      var dataDisponiblesxCategoria = @json($articulosDisponiblexCategoria);
+      var dataRecibidoxCategoria = @json($articulosRecibidoxCategoria);
+      var dataEntregadoxCategoria = @json($articulosEntregadoxCategoria);
       var cat = @json($categorias);
       var categorias = [];
       console.log(cat);
@@ -99,7 +100,7 @@
               type: 'column'
           },
           title: {
-              text: 'Artículos Entregados'
+              text: 'Artículos'
           },
           xAxis: {
               categories: cat,
@@ -126,10 +127,14 @@
               }
           },
           series: [{
-              name: 'Disponibles',
-              data: dataDisponiblesxCategoria
+              name: 'Recibidos',
+              data: dataRecibidoxCategoria
 
-          }]
+          }, {
+            name: 'Entregados',
+            data: dataEntregadoxCategoria
+
+        }]
       });
     </script>
   <!-- Artículos Disponibles x Categoría -->

@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Nuevas Categorías')
+@section('title', 'Nuevas Categorías')
 
 @section('content')
 <div class="card mb-3">

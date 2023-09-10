@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'Grupos')
+@section('title', 'Gráficas')
 
 @section('content')
 

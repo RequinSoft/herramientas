@@ -1,6 +1,6 @@
 @extends('layouts.template_coadmin')
 
-@section('title', 'TG - Buscar Artículos')
+@section('title', 'Buscar Artículos')
 
 @section('content')
 

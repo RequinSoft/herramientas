@@ -1,6 +1,6 @@
 @extends('layouts.template_receptor')
 
-@section('title', 'TG - Resumen Resguardo Nuevo')
+@section('title', 'Resumen Resguardo Nuevo')
 
 @section('content')
 

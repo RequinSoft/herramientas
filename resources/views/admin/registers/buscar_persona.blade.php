@@ -1,14 +1,19 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Resguardos')
+@section('title', 'Resguardos')
 
 @section('content')
 <div class="d-flex bg-200 mb-3 flex-row-reverse">
     <a href="{{ route('resguardo.nuevo') }}" class="btn btn-primary btn-sm" title="Añadir Resguardo"><i class="text-100 fas fa-plus-circle"></i></a>
 </div>
-<div id="tableExample2" data-list='{"valueNames":["nombre","puesto", "grupo", "custom"],"page":5,"pagination":true}'>
+<div id="tableExample2" data-list='{"valueNames":["nombre","puesto", "grupo", "custom"],"page":25,"pagination":true}'>
     <div class="table-responsive scrollbar">
       <table class="table table-bordered table-striped fs--2 mb-0">
+        <div class="search-box" data-list='{"valueNames":["ns"]}'>
+            <input class="form-control search-input fuzzy-search" type="search" placeholder="Buscar Nombre..." aria-label="Search" data-column="7"/>
+            <span class="fas fa-search search-box-icon"></span>
+        </div> 
+    </br>
         <thead class="bg-500 text-900">
           <tr>
             <th class="text-center ">N°</th>
@@ -30,6 +35,7 @@
                 <td class="grupo">{{ $row[0]->group->group }}</td>
                 <td class="text-center ">
                     <a href="{{ route('resguardo.editar', $row[0]->id) }}" class="btn  btn-sm" title="Editar"><i class="text-500 fas fa-edit"></i></a>
+                    <a href="{{ route('resguardo.crear_admin_resguardopdf', $row[0]->id) }}" target="_blank" class="btn  btn-sm" title="Imprimir"><i class="text-500 far fa-file-pdf"></i></a>
                 </td>
             </tr>
             @php

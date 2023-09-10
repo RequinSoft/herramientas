@@ -26,8 +26,7 @@ Route::get('/', [LoginController::class, 'index'])
 Route::post('/home', [LoginController::class, 'login'])
     ->name('home.store');
 
-Route::get('/home', [LoginController::class, 'destroy'])
-    ->middleware('auth')
+Route::get('/home', [LoginController::class, 'destroy'])    
     ->name('home.destroy');
 //Terminan rutas antes del Login
 /************************************ */
@@ -72,7 +71,7 @@ Route::controller(AdministradorController::class)->group(function(){
         ->middleware('auth.admin')
         ->name('usuarios.editar');
 
-    Route::post('/actualizar_usuarios', 'actualizar')
+    Route::put('/actualizar_usuarios', 'actualizar')
         ->middleware('auth.admin')
         ->name('usuarios.actualizar');
 
@@ -204,9 +203,19 @@ Route::controller(AdministradorController::class)->group(function(){
         ->middleware('auth.admin')
         ->name('articulos.actualizar');
 
+    Route::get('/activar_articulos/{id}', 'articulo_activar')
+        ->middleware('auth.admin')
+        ->name('articulos.activar');
+
     Route::get('/inactivar_articulos/{id}', 'articulo_inactivar')
         ->middleware('auth.admin')
         ->name('articulos.inactivar');
+
+        /*
+    Route::get('/activar_articulos/{id}', 'articulo_activar')
+        ->middleware('auth.admin')
+        ->name('articulos.activar');
+        */
 
     /**********************/
     /**********************/
@@ -250,6 +259,18 @@ Route::controller(AdministradorController::class)->group(function(){
     Route::post('/actualizar_asignado_articulo', 'actualizar_asignado_articulo')
         ->middleware('auth.admin')
         ->name('resguardo.actualizar_asignado_articulo');
+        
+    Route::get('/admin_firma_modal', 'admin_firma_modal')
+        ->middleware('auth.admin')
+        ->name('resguardo.admin_firma_modal');
+    
+    Route::get('/admin_entregados', 'admin_entregados')
+        ->middleware('auth.admin')
+        ->name('resguardo.admin_entregados');
+
+    Route::get('/crear_admin_resguadropdf/{id}', 'crear_resguardopdf')
+        ->middleware('auth.admin')
+        ->name('resguardo.crear_admin_resguardopdf');
 
     /****************************/
     /****************************/
@@ -270,9 +291,9 @@ Route::controller(AdministradorController::class)->group(function(){
         ->middleware('auth.admin')
         ->name('resguardo.historial_persona');
 
-        /****************************/
-        /****************************/
-        /*********** LDAP ***********/  
+    /****************************/
+    /****************************/
+    /*********** LDAP ***********/  
     Route::get('/server_ldap', 'server_ldap')
         ->middleware('auth.admin')
         ->name('admin.server_ldap');
@@ -283,7 +304,19 @@ Route::controller(AdministradorController::class)->group(function(){
 
     Route::get('/probar_ldap', 'probar_ldap')
         ->middleware('auth.admin')
-        ->name('admin.probar_ldap');
+        ->name('admin.probar_ldap');   
+
+    /**********************/
+    /**********************/
+    /***** Inactivos ******/
+    Route::get('/inactivo_articulos', 'inactivo_articulos')
+        ->middleware('auth.admin')
+        ->name('inactivos.articulos');
+        
+    Route::get('/inactivo_articulos_actualizar/{id}', 'inactivo_articulos_actualizar')
+        ->middleware('auth.admin')
+        ->name('inactivos.articulos_actualizar');
+
 });
 
 
@@ -324,6 +357,42 @@ Route::controller(CoadminController::class)->group(function(){
     Route::get('/coadmin_inactivar_articulos/{id}', 'articulo_inactivar')
         ->middleware('auth.coadmin')
         ->name('articulos.coadmin_inactivar');
+
+    Route::get('/coadmin_activar_articulos/{id}', 'articulo_activar')
+        ->middleware('auth.coadmin')
+        ->name('articulos.coadmin_activar');
+    
+
+        /**********************/
+        /**********************/
+        /***** Categorías *****/
+        Route::get('/coadmin_categorias', 'categoria_index')
+            ->middleware('auth.coadmin')
+            ->name('coadmin.categorias');
+    
+        Route::get('/coadmin_categoria_nuevo', 'categoria_nuevo')
+            ->middleware('auth.coadmin')
+            ->name('coadmin_categorias.nuevo');
+            
+        Route::post('/coadmin_categoria_crear', 'categoria_crear')
+            ->middleware('auth.coadmin')
+            ->name('coadmin_categorias.crear');
+    
+        Route::get('/coadmin_editar_categorias/{id}', 'categoria_editar')
+            ->middleware('auth.coadmin')
+            ->name('coadmin_categorias.editar');
+            
+        Route::post('/coadmin_actualizar_categorias', 'categoria_actualizar')
+            ->middleware('auth.coadmin')
+            ->name('coadmin_categorias.actualizar');
+        
+        Route::get('/coadmin_inactivar_categorias/{id}', 'categoria_inactivar')
+            ->middleware('auth.coadmin')
+            ->name('coadmin_categorias.inactivar');
+        
+            Route::get('/coadmin_intento_inactivar_categorias/{id}', 'intento_categoria_inactivar')
+                ->middleware('auth.coadmin')
+                ->name('coadmin_categorias.intento_inactivar');
 
     /**********************/
     /**********************/
@@ -367,6 +436,10 @@ Route::controller(CoadminController::class)->group(function(){
     Route::post('/actualizar_coadmin_asignado_articulo', 'actualizar_asignado_articulo')
         ->middleware('auth.coadmin')
         ->name('resguardo.actualizar_coadmin_asignado_articulo');
+
+    Route::get('/crear_coadmin_resguadropdf/{id}', 'crear_resguardopdf')
+        ->middleware('auth.coadmin')
+        ->name('resguardo.crear_coadmin_resguardopdf');
 
     /****************************/
     /****************************/
@@ -432,9 +505,43 @@ Route::controller(ReceptorController::class)->group(function(){
         ->middleware('auth.receptor')
         ->name('resguardo.actualizar_receptor_asignado_articulo');
 
-        Route::get('/resguardo_reportes', 'resguardo_reportes')
+    Route::get('/resguardo_reportes', 'resguardo_reportes')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_reportes');
+
+    Route::get('/resguardo_entregar', 'resguardo_entregar')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_entregar');
+
+    Route::get('/resguardo_pendientes', 'resguardo_pendientes')
+        ->middleware('auth.receptor')
+        ->name('resguardo.receptor_pendientes');
+
+        Route::get('/resguardo_receptor_finalizar/{id}', 'resguardo_finalizar')
             ->middleware('auth.receptor')
-            ->name('resguardo.receptor_reportes');
+            ->name('resguardo.receptor_finalizar');
+
+            Route::get('/resguardo_receptor_finalizar_linea/{linea}', 'resguardo_finalizar_linea')
+                ->middleware('auth.receptor')
+                ->name('resguardo.receptor_finalizarlinea'); 
+
+                Route::post('/resguardo_receptor_actualizar_fin_linea', 'resguardo_actualizar_fin_linea')
+                    ->middleware('auth.receptor')
+                    ->name('resguardo.receptor_actualizarFinLinea');
+
+    Route::get('/resguardo_editar_entrega/{id}', 'resguardo_editar_entrega')
+        ->middleware('auth.receptor')
+        ->name('resguardo.editar_entrega');
+
+    Route::post('/resguardo_cerrar_entrega', 'resguardo_cerrar_entrega')
+        ->middleware('auth.receptor')
+        ->name('resguardo.cerrar_entrega');
+
+    Route::get('/index_entregados', 'index_entregados')
+        ->middleware('auth.receptor')
+        ->name('resguardo.index_entregados');
+
+
 
     /****************************/
     /****************************/

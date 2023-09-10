@@ -1,6 +1,6 @@
 @extends('layouts.template_receptor')
 
-@section('title', 'TG - Artículo Asignado')
+@section('title', 'Artículo Asignado')
 
 @section('content')
 
@@ -69,6 +69,7 @@
                         $rob_selected = '';
                         $ext_selected = '';
                         $baj_selected = '';
+                        $pen_selected = '';
                             switch ($articulo[0]->status) {
                                 case 'Entregado':
                                     $asig_selected = "selected";
@@ -82,6 +83,10 @@
                                     $baj_selected = "selected";
                                     # code...
                                     break;
+                                case 'Pendiente':
+                                    $pen_selected = "selected";
+                                    # code...
+                                    break;
                                 
                                 default:
                                     # code...
@@ -90,6 +95,7 @@
 
                         @endphp
                         <option class="text-end" value="Entregado" {{$dis_selected}}> Entregado</option>
+                        <option class="text-end" value="Pendiente"{{$pen_selected}}> Pendiente</option>
                         <option class="text-end" value="Cobrado" {{$asig_selected}}> Cobrado</option>
                         <option class="text-end" value="Baja"{{$baj_selected}}> Baja</option>
                     </select>

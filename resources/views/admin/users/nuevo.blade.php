@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Nuevo Usuario')
+@section('title', 'Nuevo Usuario')
 
 @section('content') 
 

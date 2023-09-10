@@ -1,6 +1,6 @@
 @extends('layouts.template_coadmin')
 
-@section('title', 'TG - Editar Artículos')
+@section('title', 'Editar Artículos')
 
 @section('content')
 <div class="card mb-3">
@@ -8,7 +8,7 @@
       <h5 class="mb-0">Editar Artículos</h5>
     </div>
     <div class="card-body bg-light">
-        <form  action="{{ route('articulos.actualizar') }}" method="POST">
+        <form  action="{{ route('articulos.coadmin_actualizar') }}" method="POST">
         @csrf
             <div class="row gx-2">             
                 <div class="col-sm-12 mb-3">

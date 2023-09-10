@@ -14,6 +14,7 @@ class Category extends Model
         'category',
         'description',
         'depreciacion',
+        'group_id',
         'status',
     ];
 

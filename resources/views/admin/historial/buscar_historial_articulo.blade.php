@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Historial Artículos')
+@section('title', 'Historial Artículos')
 
 @section('content')
 

@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Editar Personal')
+@section('title', 'Editar Personal')
 
 @section('content')
 <div class="card mb-3">
@@ -10,15 +10,33 @@
     <div class="card-body bg-light">
         <form  action="{{ route('personal.actualizar') }}" method="POST" enctype="multipart/form-data">
         @csrf
-            <div class="row gx-2">             
+            <div class="row gx-2">  
+                <div class="col-sm-3 mb-3 text-center">
+                    @error('nombre')
+                        <br>
+                        <button type="text" disabled class="btn btn-danger btn-block"id="error" name="error">
+                            {{$message}}
+                        </button>                 
+                    @enderror
+                    @error('id')
+                        <br>
+                        <button type="text" disabled class="btn btn-danger btn-block"id="error" name="error">
+                            {{$message}}
+                        </button>                 
+                    @enderror
+                </div>            
                 <div class="col-sm-6 mb-3">
-                    <input type="text" class="form-control" id="id" name="id"
+                    <input type="text" class="form-control" id="id_viejo" name="id_viejo"
                     value="{{ $personal->id }}" hidden>
                 </div> 
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Foto de Perfil</label>
                     <input class="form-control"  type="file" name="image" id="image" />
                 </div> 
+                <div class="col-sm-6 mb-3">
+                    <label class="form-label" for="event-venue">ID</label>
+                    <input class="form-control" id="id" name="id" type="text" value="{{ $personal->id }}" />
+                </div>
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Nombre Completo</label>
                     <input class="form-control" id="nombre" name="nombre" type="text" value="{{ $personal->nombre }}" />
@@ -40,6 +58,23 @@
                         @endforeach
                     </select>
                 </div>
+                @php
+                    if($personal->status == 'activo'){
+                        $selected_activo = 'selected';
+                        $selected_inactivo = '';
+                    }elseif ($personal->status == 'inactivo') {                        
+                        $selected_activo = '';
+                        $selected_inactivo = 'selected';
+                    }
+                @endphp
+                
+                <div class="col-sm-6">
+                    <label class="form-label" for="time-zone">Estatus</label>
+                    <select class="form-select" id="status" name="status">
+                        <option style="color:green" value="activo" {{$selected_activo}}>activo</option>  
+                        <option style="color:red" value="inactivo" {{$selected_inactivo}}>inactivo</option> 
+                    </select>
+                </div>
                             
                 <button type="submit" class="btn btn-primary btn-user btn-block">
                     Actualizar
@@ -48,4 +83,16 @@
         </form>
     </div>
 </div>
+@endsection
+
+@section('script')
+    @if (session('mensaje_update'))
+        <script>
+            Swal.fire({
+                title: "ID Duplicado ",
+                text: "{{ session('mensaje_update') }}",
+                confirmButtonText: "Aceptar",
+            });
+        </script>
+    @endif
 @endsection

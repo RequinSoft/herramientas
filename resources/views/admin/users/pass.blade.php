@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Cambiar Contraseña')
+@section('title', 'Cambiar Contraseña')
 
 @section('content')
 <div class="card mb-3">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="col-sm-6 mb-3">
                     <label class="form-label" for="event-venue">Validar Contraseña</label>
-                    <input class="text-end form-control" id="password1" name="password1" type="password"/>
+                    <input class="form-control" id="password1" name="password1" type="password"/>
                 </div>
                             
                 <button type="submit" class="btn btn-primary btn-user btn-block">

@@ -1,14 +1,19 @@
 @extends('layouts.template_receptor')
 
-@section('title', 'TG - Resguardos')
+@section('title', 'Resguardos')
 
 @section('content')
 <div class="d-flex bg-200 mb-3 flex-row-reverse">
     <a href="{{ route('resguardo.nuevo') }}" class="btn btn-primary btn-sm" title="Añadir Resguardo"><i class="text-100 fas fa-plus-circle"></i></a>
 </div>
-<div id="tableExample2" data-list='{"valueNames":["nombre","puesto", "grupo", "custom"],"page":5,"pagination":true}'>
+<div id="tableExample2" data-list='{"valueNames":["nombre"],"page":25,"pagination":true}'>
     <div class="table-responsive scrollbar">
       <table class="table table-bordered table-striped fs--2 mb-0">
+        <div class="search-box" data-list='{"valueNames":["ns"]}'>
+            <input class="form-control search-input fuzzy-search" type="search" placeholder="Buscar Nombre..." aria-label="Search" data-column="7"/>
+            <span class="fas fa-search search-box-icon"></span>
+        </div> 
+        </br>
         <thead class="bg-500 text-900">
           <tr>
             <th class="text-center ">N°</th>

@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Artículo Asignado')
+@section('title', 'Artículo Asignado')
 
 @section('content')
 

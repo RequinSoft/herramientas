@@ -43,6 +43,7 @@
     <link href="{{ $ruta }}../resources/assets/css/user-rtl.min.css" rel="stylesheet" id="user-style-rtl">
     <link href="{{ $ruta }}../resources/assets/css/user.min.css" rel="stylesheet" id="user-style-default">
     <link href="{{ $ruta }}../resources/vendors/dropzone/dropzone.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="http://keith-wood.name/css/jquery.signature.css">
     <style>
       body, canvas, div, form, input {
         margin: 0;
@@ -122,7 +123,7 @@
               <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
 
             </div><a class="navbar-brand" href="index.html">
-              <div class="d-flex align-items-center py-3"><img class="me-2" src="{{ $ruta }}../resources/assets/img/icons/spot-illustrations/toolguardian-blue.png" alt="" width="40" /><span class="font-sans-serif">TG</span>
+              <div class="d-flex align-items-center py-3"><img class="me-2" src="{{ $ruta }}../resources/assets/img/icons/spot-illustrations/toolguardian-blue.png" alt="" width="40" /><span class="font-sans-serif">{{ config('app.name') }}</span>
               </div>
             </a>
           </div>
@@ -172,6 +173,18 @@
                       </a>
                       <!-- more inner pages-->
                     </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('resguardo.receptor_entregar') }}" data-bs-toggle="" aria-expanded="false">
+                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Entregar</span>
+                        </div>
+                      </a>
+                      <!-- more inner pages-->
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('resguardo.receptor_pendientes') }}" data-bs-toggle="" aria-expanded="false">
+                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Pendientes</span>
+                        </div>
+                      </a>
+                      <!-- more inner pages-->
+                    </li>
                   </ul>
                 </li>
 
@@ -195,6 +208,11 @@
                   <!-- parent pages-->
                   <a class="nav-link" href="{{ route('resguardo.receptor_buscar_historial_persona') }}" role="button" data-bs-toggle="" aria-expanded="false">
                     <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-user-tie"></span></span><span class="nav-link-text ps-1">Persona</span>
+                    </div>
+                  </a>
+                  <!-- parent pages-->
+                  <a class="nav-link" href="{{ route('resguardo.index_entregados') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-check"></span></span><span class="nav-link-text ps-1">Entregados</span>
                     </div>
                   </a>
                 </li>
@@ -265,7 +283,7 @@
                 <p class="mb-0 text-600"></span><br class="d-sm-none" /> 2022 &copy; <a href="#">BBB-SOFT</a></p>
               </div>
               <div class="col-12 col-sm-auto text-center">
-                <p class="mb-0 text-600">v1.00.0</p>
+                <p class="mb-0 text-600">{{ config('app.version') }}</p>
               </div>
             </div>
           </footer>

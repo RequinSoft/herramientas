@@ -38,7 +38,7 @@ class ReceptorController extends Controller
         $articulosAsignadosxMes = [];
         $articulosRobadosxMes_Moneda = [];
         $articulosExtraviadosxMes_Moneda = [];
-        $articulosDisponiblexCategoria = [];
+        $articulosRecibidoxCategoria = [];
         $categorias = [];
 
         $fecha = Carbon::now();
@@ -47,12 +47,15 @@ class ReceptorController extends Controller
 
         // Valor Inventario
         $entregados = Article::query()->whereIn('status',['Entregado'])->get()->count();
+        $recibidos = Article::query()->whereIn('status',['Recibido'])->get()->count();
+        //return $recibidos;
         // Artículos Robados
         $articuloRobado_Extraviado = Article::query()->whereIn('status',['Robado', 'Extraviado'])->whereMonth('updated_at', $esteMes)->whereYear('updated_at', $esteAno)->get()->sum('precio_actual');
         // Procentaje de artículos
         $cat = Category::where('status', 'activo')->whereNot('category', 'Default')->get();
         foreach($cat as $categoria){
-            $articulosDisponiblexCategoria[] = [Article::where('status', 'Entregado')->where('category_id', $categoria->id)->count()];
+            $articulosRecibidoxCategoria[] = [Article::where('status', 'Recibido')->where('category_id', $categoria->id)->count()];
+            $articulosEntregadoxCategoria[] = [Article::where('status', 'Entregado')->where('category_id', $categoria->id)->count()];
             $categorias[] = $categoria->category;
         }
 
@@ -68,7 +71,7 @@ class ReceptorController extends Controller
             $articulosExtraviadosxMes_Moneda [] = [Article::query()->whereIn('status',['Extraviado'])->whereMonth('updated_at', $i)->whereYear('updated_at', $esteAno)->get()->sum('precio_actual')];
         }
                 
-        return view('receptor.index', compact('ruta', 'entregados', 'articuloRobado_Extraviado', 'esteMes', 'categorias', 'articulosDisponiblexCategoria', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes', 'articulosRobadosxMes_Moneda', 'articulosExtraviadosxMes_Moneda'));
+        return view('receptor.index', compact('ruta', 'recibidos', 'entregados', 'articuloRobado_Extraviado', 'esteMes', 'categorias', 'articulosRecibidoxCategoria', 'articulosEntregadoxCategoria', 'articulosRobadosxMes', 'articulosExtraviadosxMes', 'articulosDisponiblesxMes', 'articulosAsignadosxMes', 'articulosRobadosxMes_Moneda', 'articulosExtraviadosxMes_Moneda'));
     }
 
     
@@ -126,10 +129,15 @@ class ReceptorController extends Controller
     public function resguardo_actualizar_linea(){
         //return request();
         
-        Line::query()->where(['id' => request()->id_linea])->update(['status' => 'Inactivo']);
+        $estado = request()->status;
+        if(request()->status == 'Baja'){
+            $estado = 'Inactivo';
+        }
+
+        Line::query()->where(['id' => request()->id_linea])->update(['status' => $estado, 'receptor_id' => auth()->user()->id]);
         $linea = Line::find(request()->id_linea);
         
-        $articulo = Article::query()->where(['id' => $linea->article_id])->update(['status' => request()->status, 'comentario1' => request()->comentario1o]);
+        $articulo = Article::query()->where(['id' => $linea->article_id])->update(['status' => request()->status, 'comentario1' => request()->id_linea]);
         
         $fecha = Carbon::parse($linea->updated_at)->format('d-m-Y');
 
@@ -178,7 +186,11 @@ class ReceptorController extends Controller
         if(request()->status == 'Asignado'){
             return  redirect()->to('/resguardo_receptor_buscar_articulo');
         }else{
-            Line::query()->where(['id' => request()->id])->update(['status' => 'Inactivo']);        
+            if(request()->status == 'Pendiente'){
+                Line::query()->where(['id' => request()->id])->update(['status' => 'Pendiente']);
+            }else{
+                Line::query()->where(['id' => request()->id])->update(['status' => 'Inactivo']); 
+            }       
             $linea = Line::find(request()->id);
             $articulo = Article::query()->where(['id' => request()->article_id])->update(['status' => request()->status, 'comentario1' => request()->comentario1]);
             $fecha = Carbon::parse($linea->updated_at)->format('d-m-Y');
@@ -205,6 +217,150 @@ class ReceptorController extends Controller
         $resguardos = Line::query()->where('status', 'Activo')->distinct()->get('personal_id');
 
         return $resguardos;
+    }
+
+    public function resguardo_entregar(){
+        $ruta = '';
+
+        $articulos = Article::with('category')->where('status', 'Recibido')->get();
+
+        return view('receptor.registers.entregas', compact('ruta', 'articulos'));
+    }
+    
+    public function resguardo_pendientes(){
+        $n=0;
+        $ruta = '';
+        $personal=[];
+
+        $resguardos = Line::query()->where('status', 'Pendiente')->distinct()->get('personal_id');
+        //return $resguardos;
+        foreach($resguardos as $resguardo){
+            $personal[] = Personal::query()->where('id', $resguardo->personal_id)->get();             
+        }
+        return view('receptor.registers.buscar_pendientes', compact('ruta', 'personal'));
+    }
+
+    public function resguardo_finalizar($id){
+        //return $id;
+        $ruta = '../';
+        $articulo = [];
+        $logged_user = auth()->user()->id;
+        $group_user = auth()->user()->group_id;
+        //return $id;
+        $person = Personal::find($id);
+        //return $person;
+        $articulos = Line::with('articulos', 'usuario')->where('personal_id', $id)->where('status', 'Pendiente')->get();
+
+        //Foreach para obtener los articulos en un arreglo y después obtener la suma
+        foreach($articulos as $art){
+            $articulo[] = $art->article_id;
+        }
+        //return $articulo;
+        $suma = Article::query()->whereIn('id', $articulo)->get()->sum('precio_actual');
+        
+        //return $articulos;
+        return view('receptor.registers.resguardo_finalizar', compact('logged_user', 'group_user', 'articulos', 'ruta', 'person', 'suma'));
+    }
+
+    public function resguardo_finalizar_linea($linea){
+        //return $linea;
+        $ruta = '../';
+
+        $line = Line::find($linea);
+        $person = Personal::find($line->personal_id);
+        $articulo = Article::find($line->article_id);
+
+        return view('receptor.registers.finalizarlinea', compact('line', 'person', 'ruta', 'articulo')); 
+    }
+
+    public function resguardo_actualizar_fin_linea(){
+        //return request();
+        
+
+        Line::query()->where(['id' => request()->id_linea])->update(['status' => 'Inactivo', 'receptor_id' => auth()->user()->id]);
+        $linea = Line::find(request()->id_linea);
+        
+        $articulo = Article::query()->where(['id' => $linea->article_id])->update(['status' => request()->status, 'comentario1' => request()->id_linea]);
+        
+        $fecha = Carbon::parse($linea->updated_at)->format('d-m-Y');
+
+        $ruta = '../storage/app/reports/';
+        if(request()->hasFile('image')){
+
+            //return 'Sí hay imagen';
+            $imagen = request()->file('image');
+            $nombre_imagen = Str::slug($linea->article_id." - ".$fecha).".".$imagen->guessExtension();
+            //return $nombre_imagen;
+
+            copy($imagen->getRealPath(), $ruta.$nombre_imagen);
+        }
+        $existencia = Line::query()->where('personal_id', $linea->personal_id)->where('status', 'Pendiente')->get()->count();
+
+        if($existencia != 0){
+            return  redirect()->to('/resguardo_receptor_finalizar/'.$linea->personal_id);
+        }else{
+            return  redirect()->to('/resguardo_pendientes');
+        }
+    } 
+
+    public function resguardo_editar_entrega($id){
+        $ruta = '../';
+        $hoy = Carbon::now();
+
+        $articulo = Article::find($id);
+        //return $articulo;
+        $categoria = Category::find($articulo->category_id);
+        //return $categoria;
+        $usuarios = User::query()->where('group_id', $categoria->group_id)->whereNot('status', 'Inactivo')->get();
+        //return $usuarios;
+        return view('receptor.registers.editarentrega', compact('ruta', 'articulo', 'hoy', 'usuarios'));
+    }
+
+    public function resguardo_cerrar_entrega(){
+        $ruta = '';
+        $fecha = Carbon::now();
+        $hoy = $fecha->format('d-m-Y');
+
+        $this->validate(request(), [
+                'entregado' => 'required',
+            ],
+            [
+                'entregado.required' => 'El usuario al que se entrega es obligatorio',
+            ]
+        );
+        
+        $ruta_firma = '../storage/app/firmas/entregas/';
+        $nombre_imagen = 'user_' . request()->entregado . '_fecha_' . $hoy;
+
+        $image_parts = explode(";base64,", request()->signed);
+             
+        $image_type_aux = explode("image/", $image_parts[0]);
+           
+        $image_type = $image_type_aux[1];
+           
+        $image_base64 = base64_decode($image_parts[1]);
+ 
+        $signature = $nombre_imagen. '.'.$image_type;
+           
+        $file = $ruta_firma . $signature;
+
+
+        file_put_contents($file, $image_base64);
+
+        //return request();
+        $articulo = Article::query()->where(['id' => request('id')])->update(['status' => 'Disponible']); 
+        $linea = Line::query()->where(['id' => request('id_linea')])->update(['status' => 'Entregado', 'comentario' => request('comentario1'), 'entregado' => request('entregado'), 'firma_entrega' => $file]);
+
+        return  redirect()->to('/resguardo_entregar');
+    }
+
+    public function index_entregados(){
+        $ruta = '';
+
+        $entregados = Line::with('articulos', 'entregado_a')->where('status', 'Entregado')->get();
+
+        //return $entregados;
+        return view('receptor.registers.index_entregados', compact('ruta', 'entregados'));
     }
 
     

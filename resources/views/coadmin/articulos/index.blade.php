@@ -1,6 +1,6 @@
 @extends('layouts.template_coadmin')
 
-@section('title', 'TG - Artículos')
+@section('title', 'Artículos')
 
 @section('content')
 <div class="d-flex bg-200 mb-3 flex-row-reverse">
@@ -9,6 +9,11 @@
 <div id="tableExample2" data-list='{"valueNames":["numero", "articulo","descripcion","marca","modelo","comentario","ns","categoria","estatus", "precio_actual", "precio_incial"],"page":25,"pagination":true}'>
     <div class="table-responsive scrollbar">
       <table class="table table-bordered table-striped fs--2 mb-0">
+        <div class="search-box" data-list='{"valueNames":["ns"]}'>
+            <input class="form-control search-input fuzzy-search" type="search" placeholder="Search N/S..." aria-label="Search" data-column="7"/>
+            <span class="fas fa-search search-box-icon"></span>
+        </div> 
+    </br>
         <thead class="bg-500 text-900">
           <tr>
             <th class="sort" data-sort="numero">N°</th>
@@ -85,6 +90,63 @@
             Swal.fire({
                 title: "Articulo Dado de Baja",
                 text: "{{ session('info') }}",
+                confirmButtonText: "Aceptar",
+            });
+        </script>
+    @endif
+    @if (Session::has('activar'))
+        <script>
+            Swal.fire({
+                title: '{{ Session('activar') }}',
+                showDenyButton: true,
+                confirmButtonText: 'Sí',
+                denyButtonText: `No`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    window.location.href = "activar_articulos/{{Session('id_articulo')}}";
+                }
+            })
+        </script>        
+    @endif
+    @if (session('articulo_update'))
+        <script>
+            Swal.fire({
+                title: "Artículo Actualizado ",
+                text: "{{ session('articulo_update') }}",
+                confirmButtonText: "Aceptar",
+            });
+        </script>
+    @endif
+    @if (session('info'))
+        <script>
+            Swal.fire({
+                title: "Artículo Dado de Baja",
+                text: "{{ session('info') }}",
+                confirmButtonText: "Aceptar",
+            });
+        </script>
+    @endif
+    @if (Session::has('articulo_desactivado'))
+        <script>
+            Swal.fire({
+                title: 'El N/S <a style="color:green";>{{ Session('articulo_ns')}} </a> ya existe <br> Estatus --> <a style="color:#FF0000";>{{ Session('articulo_desactivado') }}</a> <br>¿Desea activarlo?',
+                showDenyButton: true,
+                confirmButtonText: 'Sí',
+                denyButtonText: `No`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    window.location.href = "coadmin_activar_articulos/{{Session('id_articulo')}}";
+                }
+            })
+        </script>        
+    @endif
+    @if (session('articulo_disponible'))
+        <script>
+            Swal.fire({
+                title: '¡El N/S <a style="color:green";>{{ Session('articulo_ns')}}</a> existe! <br> Estatus <a style="color:blue";>{{ Session('articulo_disponible')}}</a>',
+                text: '',
                 confirmButtonText: "Aceptar",
             });
         </script>

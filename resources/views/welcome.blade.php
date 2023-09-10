@@ -19,7 +19,7 @@
                       </div>
                       <!--/.bg-holder-->
 
-                      <div class="z-index-1 position-relative"><a class="link-light mb-4 font-sans-serif fs-4 d-inline-block fw-bolder" href="#">Tool-Guardian</a>
+                      <div class="z-index-1 position-relative"><a class="link-light mb-4 font-sans-serif fs-4 d-inline-block fw-bolder" href="#">Herramientas</a>
                         <p class="opacity-75 text-white">&nbsp;</p>
                         <p class="opacity-75 text-white">&nbsp;</p>
                         <p class="opacity-75 text-white">¡Las herramientas en tus manos!</p>
@@ -31,7 +31,7 @@
                     <div class="p-4 p-md-5 flex-grow-1">
                       <div class="row flex-between-center">
                         <div class="col-auto">
-                          <h3>Tool-Guardian</h3>
+                          <h3>Herramientas</h3>
                         </div>
                       </div>
                       <form action="home" method="POST">
@@ -50,6 +50,16 @@
                         <div class="mb-3">
                           <button class="btn btn-primary d-block w-100 mt-3" type="submit">Ingresar</button>
                         </div>
+
+                        @error('message')
+                        <div class="form-group">
+                            <button type="text" disabled class="btn btn-danger btn-block"
+                                id="error" name="error">
+                                {{$message}}
+                            </button>
+                        </div>
+                        @enderror
+
                       </form>
                     </div>
                   </div>

@@ -1,6 +1,6 @@
 @extends('layouts.template_coadmin')
 
-@section('title', 'TG - Resumen Resguardo Nuevo')
+@section('title', 'Resumen Resguardo Nuevo')
 
 @section('content')
 
@@ -58,6 +58,7 @@
             <th class="text-center sort" data-sort="precio_actual">Costo Actual</th>
             <th class="text-center sort" data-sort="asignatario">Asignatario</th>
             <th class="text-center sort" data-sort="acciones">Fecha</th>
+            <th class="text-center sort" data-sort="acciones">Firma</th>
             <th class="text-center sort" data-sort="acciones">Acciones</th>
           </tr>
         </thead>
@@ -70,6 +71,9 @@
                 <td class="text-end precio_actual">$ {{ number_format($articulo->articulos->precio_actual, 0, ".", ",") }}</td>
                 <td class="text-end asignatario">{{ $articulo->usuario->name }}</td>
                 <td class="text-end">{{ $articulo->created_at }}</td>
+                <td class="text-center"> 
+                    <img src="{{$ruta . $articulo->firma}}" width="100" height="100"/>
+                </td>
                 <td class="text-center"><a href="{{ route('resguardo.coadmin_editarlinea', $articulo->id) }}" class="btn  btn-sm" title="Reporte"><i class="text-500 fas fa-edit"></i></a></td>
             </tr>
             @php

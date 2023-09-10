@@ -40,5 +40,10 @@ class Line extends Model
         return $this->belongsTo(Personal::class, 'personal_id');
     }
 
+    public function entregado_a(){
+
+        return $this->belongsTo(User::class, 'entregado');
+    } 
+
 
 }

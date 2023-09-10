@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Editar Categorías')
+@section('title', 'Editar Categorías')
 
 @section('content')
 <div class="card mb-3">
@@ -14,6 +14,11 @@
                 <div class="col-sm-12 mb-3">
                     <input type="text" class="form-control" id="id" name="id"
                     value="{{ $datos->id }}" hidden>
+                    @error('category')
+                        <small type="text" class="btn btn-danger btn-block">
+                            {{$message}}
+                        </small> 
+                    @enderror
                 </div> 
                 <div class="col-sm-3 mb-3">
                     <label class="form-label" for="event-venue">Categoría</label>

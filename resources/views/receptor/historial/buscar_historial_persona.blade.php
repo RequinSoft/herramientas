@@ -1,6 +1,6 @@
 @extends('layouts.template_receptor')
 
-@section('title', 'TG - Historial Personas')
+@section('title', 'Historial Personas')
 
 @section('content')
 

@@ -1,6 +1,6 @@
 @extends('layouts.template_coadmin')
 
-@section('title', 'TG - Nuevo Artículo')
+@section('title', 'Nuevo Artículo')
 
 @section('content')
 <div class="card mb-3">
@@ -100,4 +100,22 @@
         </form>
     </div>
 </div>
+@endsection
+
+@section('script')
+        @if (Session::has('articulo'))
+            <script>
+                Swal.fire({
+                    title: 'El N/S ya existe su estatus es {{ Session('articulo') }}, ¿Desea activarlo?',
+                    showDenyButton: true,
+                    confirmButtonText: 'Sí',
+                    denyButtonText: `No`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        window.location.href = "coadmin_activar_articulos/{{Session('id_articulo')}}";
+                    }
+                })
+            </script>        
+        @endif
 @endsection

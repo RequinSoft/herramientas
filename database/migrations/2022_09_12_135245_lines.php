@@ -21,13 +21,17 @@ return new class extends Migration
             $table->foreign('article_id')->references('id')->on('articles');
 
             $table->unsignedBigInteger('personal_id');
-            $table->foreign('personal_id')->references('id')->on('personal');
+            $table->foreign('personal_id')->references('id')->on('personal')->onUpdate('cascade');
             $table->unsignedBigInteger('users_id');
-            $table->foreign('users_id')->references('id')->on('users');
+            $table->foreign('users_id')->references('id')->on('users')->onUpdate('cascade');
+            $table->unsignedBigInteger('receptor_id')->nullable();
+            $table->foreign('receptor_id')->references('id')->on('users')->nullable()->onUpdate('cascade');
             $table->binary('firma')->nullable();
+            $table->binary('firma_entrega')->nullable();
             $table->string('comentario')->nullable();
+            $table->string('entregado')->nullable();
 
-            $table->enum('status', ['Activo', 'Inactivo'])->default("Inactivo");
+            $table->enum('status', ['Activo', 'Inactivo', 'Entregado', 'Pendiente', 'Recibido'])->default("Inactivo");
             $table->timestamps();
         });
     }

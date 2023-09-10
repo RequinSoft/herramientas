@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Reportar Artículo')
+@section('title', 'Reportar Artículo')
 
 @section('content')
 
@@ -71,6 +71,7 @@
                         <option value="Disponible"> Disponible</option>
                         <option value="En Reparacion"> En Reparación</option>
                         <option value="Extraviado"> Extraviado</option>  
+                        <option value="Recibido"> Recibido</option>  
                         <option value="Robado"> Robado</option>  
                         <option value="Baja"> Baja</option>
                         <option value="Entregado"> Entregado</option>       

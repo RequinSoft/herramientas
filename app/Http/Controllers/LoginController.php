@@ -43,7 +43,6 @@ class LoginController extends Controller
     }
 
     public function login(Request $request){
-        
         //Reglas de los campos        
         $this->validate(request(), [
                 'user' => 'required',
@@ -58,7 +57,7 @@ class LoginController extends Controller
         $hoy = Carbon::now();
 
         $userdb = User::query()->where(['user' => request()->user])->get();
-
+        
         if($userdb->count() == 0){
             return redirect()->to('/')->with('empty', "Actualización Exitosa");
         }
@@ -82,33 +81,34 @@ class LoginController extends Controller
         }
 
         $ldap = Ldap::all();
+        //return request()->password;
 
         $ldap_server = $ldap[0]->ldap_server;
         $ldap_dominio = $ldap[0]->ldap_domain;
         $ldap_port = $ldap[0]->ldap_port;
-        $ldap_user = $ldap[0]->ldap_user.'@'.$ldap_dominio;
-        $ldap_pass =  $ldap[0]->ldap_password;
+        $ldap_user = request()->user.'@'.$ldap_dominio;
+        $ldap_pass =  request()->password;
         $ldap_version = $ldap[0]->ldap_version;
 
         $ldap_conn = ldap_connect($ldap_server, $ldap_port);
         ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, $ldap_version);
         ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
 
-
         if($userdb[0]->auten == 2){
             //Conexión con el servidor LDAP
+            //return $userdb[0]->auten;
+
             $ldap_conn = ldap_connect($ldap_server, $ldap_port);
             ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, $ldap_version);
             ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
 
+            
             if(@ldap_bind($ldap_conn, $ldap_user, $ldap_pass)){
-                
-                $update_pass = User::query()->where(['id' => $userdb[0]->id])->update(['password' => bcrypt($ldap_pass)]);
+                $update_pass = User::query()->where(['id' => $userdb[0]->id])->update(['password' => bcrypt(request('password'))]);
 
+                //return request(['user', 'password']);
                 if(auth()->attempt(request(['user', 'password'])) == false){
-                    return back()->withErrors([
-                        'message' => '¡El Usuario y/o la Contraseña son incorrectos!',
-                    ]);
+                    return  redirect()->to('/')->with('error', "Falla del sistema");
                 }else {
                     if(auth()->user()->role_id == 1){
                         return redirect()->route('admin.index');
@@ -118,6 +118,11 @@ class LoginController extends Controller
                         return redirect()->route('receptor.index');
                     }
                 }
+            }
+            else{
+                return back()->withErrors([
+                    'message' => '¡El Usuario y/o la Contraseña son incorrectos!',
+                ]);
             }
 
         }else if ($userdb[0]->auten == 1){

@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Nuevo Artículo')
+@section('title', 'Nuevo Artículo')
 
 @section('content')
 <div class="card mb-3">
@@ -100,4 +100,31 @@
         </form>
     </div>
 </div>
+@endsection
+
+@section('script')
+        @if (Session::has('existe_baja'))
+            <script>
+                Swal.fire({
+                    title: 'El N/S <a style="color:green";>{{ Session('articulo_ns')}} </a> ya existe <br> Estatus --> <a style="color:#FF0000";>{{ Session('existe_baja') }}</a> <br>¿Desea activarlo?',
+                    showDenyButton: true,
+                    confirmButtonText: 'Sí',
+                    denyButtonText: `No`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        window.location.href = "activar_articulos/{{Session('id_articulo')}}";
+                    }
+                })
+            </script>        
+        @endif
+        @if (session('existe_disponible'))
+            <script>
+                Swal.fire({
+                    title: '¡El N/S <a style="color:green";>{{ Session('articulo_ns')}}</a> existe! <br> Estatus <a style="color:blue";>{{ Session('existe_disponible')}}</a>',
+                    text: '',
+                    confirmButtonText: "Aceptar",
+                });
+            </script>
+        @endif
 @endsection

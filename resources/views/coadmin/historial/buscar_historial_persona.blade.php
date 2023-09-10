@@ -1,6 +1,6 @@
 @extends('layouts.template_coadmin')
 
-@section('title', 'TG - Historial Personas')
+@section('title', 'Historial Personas')
 
 @section('content')
 

@@ -1,6 +1,6 @@
 @extends('layouts.template_admin')
 
-@section('title', 'TG - Configurar LDAP')
+@section('title', 'Configurar LDAP')
 
 @section('content')
 <div class="card mb-3">

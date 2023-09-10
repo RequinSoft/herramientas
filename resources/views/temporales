@@ -1,0 +1,79 @@
+
+
+<!-- Artículos Totales Disponibles x Categoría en Dinero -->
+<div class="col-md-6 col-xxl-6">
+    <div id="containerTotalesxcategoriaDinero" class="card-body">
+    </div>
+</div>
+<!-- Artículos Totales Disponibles x Categoría en Dinero  -->
+
+<!-- Test Totales x Categoria en Dinero -->
+  <script>
+    var dataPie = [];
+    var totalArticulos = @json($totalArticulos);
+    var totalArticulosDinero = @json($totalArticulosDinero);
+    //console.log("Total de Artículos " + totalArticulos);
+    for(var i=0; i<cat.length; i++){
+      dataPie[i] = "{name: " + cat[i] + ", y: " + totalArticulos[i] + "},";
+    }
+    console.log("Categorías--> " + cat);
+    console.log("Total Artículos Cantidad --> " + totalArticulos);
+    console.log("Total Artículos Dinero --> " + totalArticulosDinero);
+    console.log(dataPie);
+
+    Highcharts.chart('containerTotalesxcategoriaDinero', {
+      colors: ['#ff6961', '#77dd77', '#fdfd96', '#84b6f4', '#fdcae1', '#fcb7af', '#b0c2f2', '#fdf9c4', '#ffda9e', '#c5c6c8', '#b2e2f2'],
+      chart: {
+        type: 'pie'
+      },
+      accessibility: {
+        point: {
+            valueSuffix: '%'
+        }
+      },
+      title: {
+        text: 'Dinero'
+      },
+      tooltip: {
+        pointFormat: '{point.percentage:.0f}%</n>'
+      },
+      plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true
+            },
+            showInLegend: false
+        }
+      },
+      series: [{
+        name: null,
+        colorByPoint: true,
+        data: [
+          {name: cat[0], y: totalArticulosDinero[0]},
+          {name: cat[1], y: totalArticulosDinero[1]},
+          {name: cat[2], y: totalArticulosDinero[2]},
+          {name: cat[3], y: totalArticulosDinero[3]},
+          {name: cat[4], y: totalArticulosDinero[4]},
+          {name: cat[5], y: totalArticulosDinero[5]},
+          {name: cat[6], y: totalArticulosDinero[6]},
+          {name: cat[7], y: totalArticulosDinero[7]},
+          {name: cat[8], y: totalArticulosDinero[8]},
+          {name: cat[9], y: totalArticulosDinero[9]},
+          {name: cat[10], y: totalArticulosDinero[10]},
+          {name: cat[11], y: totalArticulosDinero[11]},
+          {name: cat[12], y: totalArticulosDinero[12]},
+          {name: cat[13], y: totalArticulosDinero[13]},
+          {name: cat[14], y: totalArticulosDinero[14]},
+          {name: cat[15], y: totalArticulosDinero[15]},
+          {name: cat[16], y: totalArticulosDinero[16]},
+          {name: cat[17], y: totalArticulosDinero[17]},
+          {name: cat[18], y: totalArticulosDinero[18]},
+          {name: cat[19], y: totalArticulosDinero[19]},
+        ]
+        
+      }]
+    });
+  </script>
+  <!-- Test Totales x Categoria en Dinero -->

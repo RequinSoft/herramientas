@@ -25,6 +25,7 @@
     <link href="{{ $ruta }}../resources/vendors/choices/choices.min.css" rel="stylesheet">
     <link href="{{ $ruta }}../resources/vendors/prism/prism-okaidia.css" rel="stylesheet">
     <link href="{{ $ruta }}../resources/vendors/flatpickr/flatpickr.min.css" rel="stylesheet" />
+    <link href="{{ $ruta }}../resources/assets/css/datatables.min.css" rel="stylesheet" />
     @yield('css')
     <meta name="theme-color" content="#ffffff">
     <script src="{{ $ruta }}../resources/assets/js/config.js"></script>
@@ -43,6 +44,11 @@
     <link href="{{ $ruta }}../resources/assets/css/user-rtl.min.css" rel="stylesheet" id="user-style-rtl">
     <link href="{{ $ruta }}../resources/assets/css/user.min.css" rel="stylesheet" id="user-style-default">
     <link href="{{ $ruta }}../resources/vendors/dropzone/dropzone.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="http://keith-wood.name/css/jquery.signature.css">
+    
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
     <style>
       body, canvas, div, form, input {
         margin: 0;
@@ -68,6 +74,11 @@
       }
       #saveSignature {
         display: none;
+      }  
+      .kbw-signature { width: 100%; height: 180px;}
+      #signaturePad canvas{
+      width: 100% !important;
+      height: auto;
       }
     </style>
     <script>
@@ -121,8 +132,8 @@
 
               <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
 
-            </div><a class="navbar-brand" href="index.html">
-              <div class="d-flex align-items-center py-3"><img class="me-2" src="{{ $ruta }}../resources/assets/img/icons/spot-illustrations/toolguardian-blue.png" alt="" width="40" /><span class="font-sans-serif">TG</span>
+            </div><a class="navbar-brand" href="#">
+              <div class="d-flex align-items-center py-3"><img class="me-2" src="{{ $ruta }}../resources/assets/img/icons/spot-illustrations/toolguardian-blue.png" alt="" width="40" /><span class="font-sans-serif">{{ config('app.name') }}</span>
               </div>
             </a>
           </div>
@@ -242,9 +253,13 @@
                       <!-- more inner pages-->
                     </li>
                   </ul>
-                </li>
-
-                
+                  
+                  <!-- parent pages-->
+                  <a class="nav-link" href="{{ route('resguardo.admin_entregados') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-book"></span></span><span class="nav-link-text ps-1">Entregados</span>
+                    </div>
+                  </a>
+                </li>                
 
                 <li class="nav-item">
                   <!-- label-->
@@ -258,7 +273,7 @@
                   
                   <!-- parent pages-->
                   <a class="nav-link" href="{{ route('resguardo.buscar_historial_articulo') }}" role="button" data-bs-toggle="" aria-expanded="false">
-                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-book"></span></span><span class="nav-link-text ps-1">Articulo</span>
+                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-book"></span></span><span class="nav-link-text ps-1">Artículo</span>
                     </div>
                   </a>
                   <!-- parent pages-->
@@ -267,6 +282,34 @@
                     </div>
                   </a>
                 </li>
+
+
+                
+
+                
+                <!--
+                <li class="nav-item">
+                   label
+                  <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+                    <div class="col-auto navbar-vertical-label">Inactivos
+                    </div>
+                    <div class="col ps-0">
+                      <hr class="mb-0 navbar-vertical-divider" />
+                    </div>
+                  </div>
+                  
+                   parent pages
+                  <a class="nav-link" href="{{ route('inactivos.articulos') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-book"></span></span><span class="nav-link-text ps-1">Artículos</span>
+                    </div>
+                  </a>
+                   parent pages
+                  <a class="nav-link" href="{{ route('resguardo.buscar_historial_persona') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-user-tie"></span></span><span class="nav-link-text ps-1">Persona</span>
+                    </div>
+                  </a>
+                </li>
+                -->
 
 
 
@@ -334,7 +377,7 @@
                 <p class="mb-0 text-600"></span><br class="d-sm-none" /> 2022 &copy; <a href="#">BBB-SOFT</a></p>
               </div>
               <div class="col-12 col-sm-auto text-center">
-                <p class="mb-0 text-600">v1.00.0</p>
+                <p class="mb-0 text-600"> {{ config('app.version') }}</p>
               </div>
             </div>
           </footer>
