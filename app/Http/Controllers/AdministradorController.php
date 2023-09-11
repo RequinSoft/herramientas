@@ -431,17 +431,29 @@ class AdministradorController extends Controller
         return  redirect()->to('/admin_categorias')->with('update_categoria', $category);
     }
 
+    public function intento_categoria_inactivar($id){
+
+        $category = Category::find($id);
+        return  redirect()->to('/admin_categorias')->with('inactivar', $category->category)->with('id', $category->id);
+    }
+
     public function categoria_inactivar($id){
-
         $grupo = Category::find($id);
-        $grupo_nombre = Group::find($grupo->group_id);
+        $articulos = Article::query()->where('category_id', $grupo->id)->get();
+        $cantidad_articulos = Article::query()->where('category_id', $grupo->id)->count();
 
-        if($grupo->group_id != 1){
-            return  redirect()->to('/admin_categorias')->with('grupo', $grupo_nombre->group);
-        } else {
 
+        if($cantidad_articulos == 0){
             $category = Category::query()->where(['id' => $id])->update(['status' => 'inactivo']);
-            return  redirect()->to('/admin_categorias')->with('info', $grupo->category);
+            return  redirect()->to('admin_categorias')->with('categoria_inactivada', $grupo->category);
+        }else{
+            foreach($articulos as $articulos){ 
+                //return $articulos->id;
+                $update_articulos = Article::query()->where('id', $articulos->id)->update(['category_id' => 1]);
+            }
+            //return $articulos;
+            $category = Category::query()->where(['id' => $id])->update(['status' => 'inactivo']);
+            return  redirect()->to('/admin_categorias')->with('categoria_inactivada', $grupo->category);
         }
     }
 

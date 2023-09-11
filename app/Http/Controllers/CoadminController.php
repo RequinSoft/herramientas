@@ -304,14 +304,14 @@ class CoadminController extends Controller
             $category = Category::query()->where(['id' => $id])->update(['status' => 'inactivo']);
             return  redirect()->to('/coadmin_categorias')->with('categoria_inactivada', $grupo->category);
         }else{
-            foreach($articulos as $articulos){                
+            foreach($articulos as $articulos){ 
+                //return $articulos->id;
                 $update_articulos = Article::query()->where('id', $articulos->id)->update(['category_id' => 1]);
             }
+            //return $articulos;
             $category = Category::query()->where(['id' => $id])->update(['status' => 'inactivo']);
-            return  redirect()->to('/coadmin_categorias')->with('info', $grupo->category);
+            return  redirect()->to('/coadmin_categorias')->with('categoria_inactivada', $grupo->category);
         }
-        //$category = Category::query()->where(['id' => $id])->update(['status' => 'inactivo']);
-        //return  redirect()->to('/coadmin_categorias')->with('info', $grupo->category);
     }
 
     

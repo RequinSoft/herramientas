@@ -31,7 +31,7 @@
                 <td class="text-center">
                     <a href="{{ route('categorias.editar', $row->id) }}" class="btn btn-sm" title="Editar"><i class="text-500 fas fa-edit"></i></a>
                     &nbsp;
-                    <a href="{{ route('categorias.inactivar', $row->id) }}" class="btn btn-sm" title="Inhabilitar"><i class="text-500 fas fa-trash-alt"></i></a>
+                    <a href="{{ route('admin_categorias.intento_inactivar', $row->id) }}" class="btn btn-sm" title="Inhabilitar"><i class="text-500 fas fa-trash-alt"></i></a>
                 </td>
             </tr>
             @php
@@ -65,6 +65,30 @@
             Swal.fire({
                 title: 'Categoría Actualizada',
                 text: '{{ session('update_categoria') }}',
+                confirmButtonText: "Aceptar",
+            })
+        </script>
+    @endif
+    @if (session('inactivar'))
+    <script>
+        Swal.fire({
+            title: 'Todos los artículos de esta categría pasarán a Default, ¿Quieres inactivar la categoría {{ session('inactivar') }}?',
+            showDenyButton: true,
+            confirmButtonText: 'Sí',
+            denyButtonText: `No`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                location.href = 'admin_inactivar_categorias/{{session("id")}}';
+            } 
+        })
+    </script>
+    @endif
+    @if (session('categoria_inactivada'))
+        <script>
+            Swal.fire({
+                title: 'Categoría Inactivada',
+                text: '{{ session('categoria_inactivada') }}',
                 confirmButtonText: "Aceptar",
             })
         </script>

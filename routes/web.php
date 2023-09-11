@@ -136,9 +136,13 @@ Route::controller(AdministradorController::class)->group(function(){
         
     Route::post('/actualizar_categorias', 'categoria_actualizar')
         ->middleware('auth.admin')
-        ->name('categorias.actualizar');
+        ->name('categorias.actualizar');        
+        
+        Route::get('/admin_intento_inactivar_categorias/{id}', 'intento_categoria_inactivar')
+        ->middleware('auth.admin')
+        ->name('admin_categorias.intento_inactivar');
     
-    Route::get('/inactivar_categorias/{id}', 'categoria_inactivar')
+    Route::get('/admin_inactivar_categorias/{id}', 'categoria_inactivar')
         ->middleware('auth.admin')
         ->name('categorias.inactivar');
 
