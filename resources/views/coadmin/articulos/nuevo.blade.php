@@ -8,7 +8,7 @@
       <h5 class="mb-0">Nuevo Artículo</h5>
     </div>
     <div class="card-body bg-light">
-        <form action="coadmin_articulo_crear" method="POST">
+        <form action="{{route('articulos.coadmin_crear')}}" method="POST">
         @csrf
             <div class="row gx-2">  
                 <div class="col-sm-6 mb-1">
@@ -103,6 +103,9 @@
 @endsection
 
 @section('script')
+
+    <script src="{{ $ruta }}../resources/assets/js/flatpickr.js"></script>
+    
         @if (Session::has('articulo'))
             <script>
                 Swal.fire({

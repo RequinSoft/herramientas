@@ -25,7 +25,7 @@ return new class extends Migration
             $table->unsignedBigInteger('users_id');
             $table->foreign('users_id')->references('id')->on('users')->onUpdate('cascade');
             $table->unsignedBigInteger('receptor_id')->nullable();
-            $table->foreign('receptor_id')->references('id')->on('users')->nullable()->onUpdate('cascade');
+            $table->foreign('receptor_id')->references('id')->on('users')->nullable();
             $table->binary('firma')->nullable();
             $table->binary('firma_entrega')->nullable();
             $table->string('comentario')->nullable();

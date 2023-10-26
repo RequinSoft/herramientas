@@ -367,36 +367,36 @@ Route::controller(CoadminController::class)->group(function(){
         ->name('articulos.coadmin_activar');
     
 
-        /**********************/
-        /**********************/
-        /***** Categorías *****/
-        Route::get('/coadmin_categorias', 'categoria_index')
-            ->middleware('auth.coadmin')
-            ->name('coadmin.categorias');
-    
-        Route::get('/coadmin_categoria_nuevo', 'categoria_nuevo')
-            ->middleware('auth.coadmin')
-            ->name('coadmin_categorias.nuevo');
-            
-        Route::post('/coadmin_categoria_crear', 'categoria_crear')
-            ->middleware('auth.coadmin')
-            ->name('coadmin_categorias.crear');
-    
-        Route::get('/coadmin_editar_categorias/{id}', 'categoria_editar')
-            ->middleware('auth.coadmin')
-            ->name('coadmin_categorias.editar');
-            
-        Route::post('/coadmin_actualizar_categorias', 'categoria_actualizar')
-            ->middleware('auth.coadmin')
-            ->name('coadmin_categorias.actualizar');
+    /**********************/
+    /**********************/
+    /***** Categorías *****/
+    Route::get('/coadmin_categorias', 'categoria_index')
+        ->middleware('auth.coadmin')
+        ->name('coadmin.categorias');
+
+    Route::get('/coadmin_categoria_nuevo', 'categoria_nuevo')
+        ->middleware('auth.coadmin')
+        ->name('coadmin_categorias.nuevo');
         
-        Route::get('/coadmin_inactivar_categorias/{id}', 'categoria_inactivar')
-            ->middleware('auth.coadmin')
-            ->name('coadmin_categorias.inactivar');
+    Route::post('/coadmin_categoria_crear', 'categoria_crear')
+        ->middleware('auth.coadmin')
+        ->name('coadmin_categorias.crear');
+
+    Route::get('/coadmin_editar_categorias/{id}', 'categoria_editar')
+        ->middleware('auth.coadmin')
+        ->name('coadmin_categorias.editar');
         
-            Route::get('/coadmin_intento_inactivar_categorias/{id}', 'intento_categoria_inactivar')
-                ->middleware('auth.coadmin')
-                ->name('coadmin_categorias.intento_inactivar');
+    Route::post('/coadmin_actualizar_categorias', 'categoria_actualizar')
+        ->middleware('auth.coadmin')
+        ->name('coadmin_categorias.actualizar');
+    
+    Route::get('/coadmin_inactivar_categorias/{id}', 'categoria_inactivar')
+        ->middleware('auth.coadmin')
+        ->name('coadmin_categorias.inactivar');
+    
+        Route::get('/coadmin_intento_inactivar_categorias/{id}', 'intento_categoria_inactivar')
+            ->middleware('auth.coadmin')
+            ->name('coadmin_categorias.intento_inactivar');
 
     /**********************/
     /**********************/

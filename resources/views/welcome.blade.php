@@ -34,7 +34,7 @@
                           <h3>Herramientas</h3>
                         </div>
                       </div>
-                      <form action="home" method="POST">
+                      <form action="{{route('home.store')}}" method="POST">
                         @csrf
                         <div class="mb-3">
                           <label class="form-label" for="card-email">Usuario</label>

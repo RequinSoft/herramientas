@@ -8,7 +8,7 @@
       <h5 class="mb-0">Nueva Categoría</h5>
     </div>
     <div class="card-body bg-light">
-        <form action="categoria_crear" method="POST">
+        <form action="{{route('categorias.crear')}}" method="POST">
         @csrf
             <div class="row gx-2">  
 

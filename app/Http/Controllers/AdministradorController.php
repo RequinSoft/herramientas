@@ -170,7 +170,7 @@ class AdministradorController extends Controller
         $usuario = User::create(request(['user', 'name', 'auten', 'email', 'password', 'comment1', 'comment2', 'role_id', 'group_id', 'action_by']));
         $last = User::all()->last()->id;
 
-        $ruta = '../storage/app/avatars/';
+        $ruta = '../storage/app/evidencias/';
         if(request()->hasFile('image')){
 
             //return 'Sí hay imagen';

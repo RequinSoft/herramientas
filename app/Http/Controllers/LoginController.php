@@ -56,10 +56,12 @@ class LoginController extends Controller
 
         $hoy = Carbon::now();
 
-        $userdb = User::query()->where(['user' => request()->user])->get();
+        $usuario = request()->user;
+        $userdb = User::query()->where('user', $usuario)->get();
+        //return $userdb;
         
         if($userdb->count() == 0){
-            return redirect()->to('/')->with('empty', "Actualización Exitosa");
+            return redirect()->to('/')->with('empty', "El Usuarios no existe");
         }
 
         $articulo = Article::with('category')->whereIn('status', ['Disponible', 'Asignado', 'En Reparacion'])->get();

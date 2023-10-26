@@ -64,3 +64,9 @@
     </div>
 </div>
 @endsection
+
+@section('script')
+
+    <script src="{{ $ruta }}../resources/assets/js/flatpickr.js"></script>
+
+@endsection

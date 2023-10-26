@@ -9,7 +9,7 @@
       <h5 class="mb-0">Nuevo Personal</h5>
     </div>
     <div class="card-body bg-light">
-        <form action="personal_crear" method="POST" enctype="multipart/form-data">
+        <form action="{{route('personal.crear')}}" method="POST" enctype="multipart/form-data">
         @csrf
             <div class="row gx-2">          
                 <div class="col-sm-3 mb-3">

@@ -9,7 +9,7 @@
       <h5 class="mb-0">Verificar Artículo</h5>
     </div>
     <div class="card-body bg-light">
-        <form action="asignado_articulo" method="POST">
+        <form action="{{roue('resguardo.asignado_articulo')}}" method="POST">
         @csrf    
                 <div class="col-sm-6 mb-3">
                     <input type="text" class="form-control" id="action_by" name="action_by"value="{{auth()->user()->id}}" hidden>

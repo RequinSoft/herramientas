@@ -8,7 +8,7 @@
       <h5 class="mb-0">Nuevo Departamento</h5>
     </div>
     <div class="card-body bg-light">
-        <form action="grupo_crear" method="POST">
+        <form action="{{route('grupos.crear')}}" method="POST">
         @csrf
             <div class="row gx-2">  
 

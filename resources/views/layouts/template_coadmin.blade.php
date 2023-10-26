@@ -451,8 +451,6 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
     <script src="{{ $ruta }}../resources/vendors/list.js/list.min.js"></script>
     <script src="{{ $ruta }}../resources/assets/js/theme.js"></script>
-    <script src="{{ $ruta }}../resources/vendors/dropzone/dropzone.min.js"></script>
-    <script src="{{ $ruta }}../resources/assets/js/flatpickr.js"></script>
     <script src="{{ $ruta }}../resources/assets/charts/highcharts.js"></script>
     @yield('script')
     
