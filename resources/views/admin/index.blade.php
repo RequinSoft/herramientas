@@ -91,6 +91,7 @@
 
   <!-- Contenido -->
 @endsection
+
 @section('script')
 
 @if (session('resguardo_add'))

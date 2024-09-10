@@ -514,7 +514,6 @@
     <script src="{{ $ruta }}../resources/vendors/echarts/echarts.min.js"></script>
     <script src="{{ $ruta }}../resources/vendors/fontawesome/all.min.js"></script>
     <script src="{{ $ruta }}../resources/vendors/lodash/lodash.min.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
     <script src="{{ $ruta }}../resources/vendors/list.js/list.min.js"></script>
     <script src="{{ $ruta }}../resources/assets/js/theme.js"></script>
     <script src="{{ $ruta }}../resources/vendors/dropzone/dropzone.min.js"></script>

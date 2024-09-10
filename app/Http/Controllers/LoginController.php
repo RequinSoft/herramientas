@@ -25,7 +25,7 @@ class LoginController extends Controller
             'uid' => $request->get('user'),
             'password' => $request->get('password'),
         ];
-        return $credentials;
+        //return $credentials;
         if (Auth::attempt($credentials)) {
             $user = Auth::user()->name;
         

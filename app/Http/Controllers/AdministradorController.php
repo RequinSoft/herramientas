@@ -279,11 +279,12 @@ class AdministradorController extends Controller
                 'id.unique' => 'El ID ya existe',
             ]
         );
-
+        //return request();
 
 
         $personal = Personal::create(request(['nombre', 'puesto', 'group_id']));
         $last = Personal::all()->last()->id;
+        $updateuser = Personal::query()->where(['id' => 1])->update(request(['id']));
         
         $nombre = "personal_".$last;
         $ruta = '../storage/app/avatars/';
