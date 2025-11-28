@@ -297,11 +297,11 @@ class AdministradorController extends Controller
         $personal = Personal::create(
             [
                 'id' => $request->id,
-                'nombre' => $request->nombre,
+                'nombre' => $nombre_personal,
                 'puesto' => $request->puesto,
                 'group_id' => $request->group_id,
             ]);
-	//return $personal;
+	    //return $personal;
         //$last = request('id');
         //return $last;
         

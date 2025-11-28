@@ -13,6 +13,7 @@ class Personal extends Model
     protected $table = 'personal';
 
     protected $fillable = [
+        'id',
         'nombre',
         'puesto',
         'group_id',
