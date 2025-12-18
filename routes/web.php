@@ -272,6 +272,10 @@ Route::controller(AdministradorController::class)->group(function(){
         ->middleware('auth.admin')
         ->name('resguardo.admin_entregados');
 
+    Route::get('/admin_articleDisponible/{id}', 'admin_articleDisponible')
+        ->middleware('auth.admin')
+        ->name('admin.articleDisponible');
+
     Route::get('/crear_admin_resguadropdf/{id}', 'crear_resguardopdf')
         ->middleware('auth.admin')
         ->name('resguardo.crear_admin_resguardopdf');

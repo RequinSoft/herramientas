@@ -633,6 +633,20 @@ class AdministradorController extends Controller
             return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
         }else if($existe == 1 && $articulo[0]->status == 'Entregado'){
             return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
+        }else if($existe == 1 && $articulo[0]->status == 'Asignado'){
+            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
+        }else if($existe == 1 && $articulo[0]->status == 'En Reparacion'){
+            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
+        }else if($existe == 1 && $articulo[0]->status == 'Robado'){
+            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
+        }else if($existe == 1 && $articulo[0]->status == 'Extraviado'){
+            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
+        }else if($existe == 1 && $articulo[0]->status == 'Recibido'){
+            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
+        }else if($existe == 1 && $articulo[0]->status == 'Cobrado'){
+            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
+        }else if($existe == 1 && $articulo[0]->status == 'Pendiente'){
+            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
         }else{
 
             $datos = Article::create(request(['article', 'precio_inicial', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1']));
@@ -962,6 +976,21 @@ class AdministradorController extends Controller
         //return $linea;
         
         return view('admin.registers.buscar_entregados', compact('ruta', 'entregados'));
+    }
+
+    public function admin_articleDisponible($id){
+        
+        $update = Article::query()->where(['id' => $id])->update(
+            [
+                'status' => 'Disponible', 
+                'comentario1' => ''
+            ]
+        );
+
+        $article = Article::find($id);
+        $msg = "Artículo ".$article->article." cambiado a Disponible.";
+                
+        return redirect()->route('resguardo.admin_entregados')->with('articulo_disponible', $msg);
     }
 
     public function crear_resguardopdf($id){

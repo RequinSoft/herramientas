@@ -15,6 +15,7 @@
             <th class="text-center sort" data-sort="nombre">Artículo</th>
             <th class="text-center sort" data-sort="puesto">N/S</th>
             <th class="text-center sort" data-sort="grupo">Estatus</th>
+            <th class="text-center sort" data-sort="acciones">Acciones</th>
           </tr>
         </thead>
         <tbody class="list">
@@ -27,6 +28,11 @@
                 <td class="nombre">{{ $row->article }}</td>
                 <td class="puesto">{{ $row->ns }}</td>
                 <td class="grupo">{{ $row->status }}</td>
+                <td class="acciones">
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{{ route('admin.articleDisponible', $row->id) }}" class="btn btn-sm btn-success" title="Activar"><i class="fas fa-check"></i></a>
+                    </div>
+                </td>
             </tr>
             @php
                 $n++;
@@ -53,11 +59,11 @@
             });
         </script>
     @endif
-    @if (session('user_add'))
+    @if (session('articulo_disponible'))
         <script>
             Swal.fire({
-                title: "Usuario Creado ",
-                text: "{{ session('user_add') }}",
+                title: "Artículo Disponible ",
+                text: "{{ session('articulo_disponible') }}",
                 confirmButtonText: "Aceptar",
             });
         </script>
