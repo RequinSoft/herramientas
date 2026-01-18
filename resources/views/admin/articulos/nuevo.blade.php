@@ -106,7 +106,7 @@
         @if (Session::has('existe_baja'))
             <script>
                 Swal.fire({
-                    title: 'El N/S <a style="color:green";>{{ Session('articulo_ns')}} </a> ya existe <br> Estatus --> <a style="color:#FF0000";>{{ Session('existe_baja') }}</a> <br>¿Desea activarlo?',
+                    title: 'El N/S <a style="color:green";>{{ Session('articulo_ns')}} </a> ya existe <br> Estatus --> <a style="color:#FF0000";>{{ Session('existe_baja') }}</a> <br>¿Desea hacerlo Disponible?',
                     showDenyButton: true,
                     confirmButtonText: 'Sí',
                     denyButtonText: `No`,

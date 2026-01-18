@@ -627,26 +627,8 @@ class AdministradorController extends Controller
         $articulo = Article::query()->where(['ns' => request('ns')])->get();
 
         
-        if($existe == 1 && $articulo[0]->status == 'Baja'){
+        if($existe == 1 && $articulo[0]->status != 'Disponible'){
             return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_baja', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
-        }else if($existe == 1 && $articulo[0]->status == 'Disponible'){
-            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
-        }else if($existe == 1 && $articulo[0]->status == 'Entregado'){
-            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
-        }else if($existe == 1 && $articulo[0]->status == 'Asignado'){
-            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
-        }else if($existe == 1 && $articulo[0]->status == 'En Reparacion'){
-            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
-        }else if($existe == 1 && $articulo[0]->status == 'Robado'){
-            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
-        }else if($existe == 1 && $articulo[0]->status == 'Extraviado'){
-            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
-        }else if($existe == 1 && $articulo[0]->status == 'Recibido'){
-            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
-        }else if($existe == 1 && $articulo[0]->status == 'Cobrado'){
-            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
-        }else if($existe == 1 && $articulo[0]->status == 'Pendiente'){
-            return  redirect()->to('/articulo_nuevo')->with('id_articulo', $articulo[0]->id)->with('existe_disponible', $articulo[0]->status)->with('articulo_ns', $articulo[0]->ns);
         }else{
 
             $datos = Article::create(request(['article', 'precio_inicial', 'description', 'ns', 'category_id', 'marca', 'modelo', 'comentario1']));
